@@ -1,21 +1,21 @@
-import type { GatsbyConfig, PluginRef } from "gatsby"
-import "dotenv/config"
+import type { GatsbyConfig, PluginRef } from "gatsby";
+import "dotenv/config";
 
-const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE
+const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE;
 
 const config: GatsbyConfig = {
   siteMetadata: {
     // You can overwrite values here that are used for the SEO component
     // You can also add new values here to query them like usual
     // See all options: https://github.com/LekoArts/gatsby-themes/blob/main/themes/gatsby-theme-cara/gatsby-config.mjs
-    siteTitle: `Cara`,
-    siteTitleAlt: `Cara - Gatsby Starter Portfolio`,
-    siteHeadline: `Cara - Gatsby Theme from @lekoarts`,
+    siteTitle: `Lyuboslav Alexandrov`,
+    siteTitleAlt: `Lyuboslav Alexandrov | Back-End Developer`,
+    siteHeadline: `Lyuboslav Alexandrov - Back-End developer, Laravel and PHP expert`,
     siteUrl: `https://cara.lekoarts.de`,
-    siteDescription: `Playful and Colorful One-Page portfolio featuring Parallax effects and animations`,
+    siteDescription: `Lyuboslav Alexandrov is a back-end developer specializing in Laravel and PHP, with experience in CI/CD, WebSockets, and project management. Located in Ruse, Bulgaria.`,
     siteImage: `/banner.jpg`,
     siteLanguage: `en`,
-    author: `@lekoarts_de`,
+    author: `@l_alexandroff`,
   },
   trailingSlash: `always`,
   plugins: [
@@ -27,9 +27,9 @@ const config: GatsbyConfig = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Cara - @lekoarts/gatsby-theme-cara`,
-        short_name: `Cara`,
-        description: `Playful and Colorful One-Page portfolio featuring Parallax effects and animations`,
+        name: `Lyuboslav Alexandrov | Back-End Developer`,
+        short_name: `Lyuboslav Alexandrov`,
+        description: `Lyuboslav Alexandrov is a back-end developer specializing in Laravel and PHP, with experience in CI/CD, WebSockets, and project management. Located in Ruse, Bulgaria.`,
         start_url: `/`,
         background_color: `#141821`,
         // This will impact how browsers show your PWA/website
@@ -60,6 +60,6 @@ const config: GatsbyConfig = {
       },
     },
   ].filter(Boolean) as Array<PluginRef>,
-}
+};
 
-export default config
+export default config;

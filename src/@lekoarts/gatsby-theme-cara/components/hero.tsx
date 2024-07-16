@@ -10,6 +10,7 @@ import {
 } from "@lekoarts/gatsby-theme-cara/src/styles/animations";
 import Intro from "../sections/intro.mdx";
 import { withPrefix } from "gatsby";
+import { StaticImage } from "gatsby-plugin-image";
 
 const Hero = ({ offset, factor = 1 }: { offset: number; factor?: number }) => (
   <div sx={{ position: `relative` }}>
@@ -161,8 +162,8 @@ const Hero = ({ offset, factor = 1 }: { offset: number; factor?: number }) => (
           textAlign: "center",
         }}
       >
-        <img
-          src={withPrefix("/me.jpg")}
+        <StaticImage
+          src="../../../images/me.jpg"
           sx={{
             borderRadius: `30rem`,
             height: `30vw`,

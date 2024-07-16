@@ -11,9 +11,9 @@ const config: GatsbyConfig = {
     siteTitle: `Lyuboslav Alexandrov`,
     siteTitleAlt: `Lyuboslav Alexandrov | Back-End Developer`,
     siteHeadline: `Lyuboslav Alexandrov - Back-End developer, Laravel and PHP expert`,
-    siteUrl: `https://cara.lekoarts.de`,
+    siteUrl: `https://lyuboo.com`,
     siteDescription: `Lyuboslav Alexandrov is a back-end developer specializing in Laravel and PHP, with experience in CI/CD, WebSockets, and project management. Located in Ruse, Bulgaria.`,
-    siteImage: `/banner.jpg`,
+    siteImage: `/ogImage.jpg`,
     siteLanguage: `en`,
     author: `@l_alexandroff`,
   },
@@ -59,6 +59,11 @@ const config: GatsbyConfig = {
         open: false,
       },
     },
+    `gatsby-plugin-perf-budgets`,
+    `gatsby-plugin-webpack-bundle-analyser-v2`,
+    `gatsby-plugin-image`,
+    `gatsby-plugin-sharp`,
+    `gatsby-transformer-sharp`,
   ].filter(Boolean) as Array<PluginRef>,
 };
 

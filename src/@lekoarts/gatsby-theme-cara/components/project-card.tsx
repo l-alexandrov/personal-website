@@ -1,7 +1,8 @@
 /** @jsx jsx */
 import { jsx } from "theme-ui";
 import { ThemeUIStyleObject } from "@theme-ui/css";
-import { AspectImage, Box } from "theme-ui";
+import { Box } from "theme-ui";
+import { StaticImage } from "gatsby-plugin-image";
 
 type ProjectCardProps = {
   link: string;
@@ -10,7 +11,7 @@ type ProjectCardProps = {
   bg: string;
   rel?: string;
   style?: ThemeUIStyleObject;
-  imageSrc?: string;
+  image?: typeof StaticImage;
 };
 
 const ProjectCard = ({
@@ -20,7 +21,7 @@ const ProjectCard = ({
   bg,
   rel,
   style,
-  imageSrc,
+  image,
 }: ProjectCardProps) => (
   <a
     href={link}
@@ -87,12 +88,7 @@ const ProjectCard = ({
         {title}
       </div>
     </div>
-    {imageSrc && (
-      <Box sx={{ width: `100%` }}>
-        <AspectImage ratio={16 / 9} src={imageSrc} />
-      </Box>
-    )}
+    {image && <Box sx={{ width: `100%` }}>{image}</Box>}
   </a>
 );
-
 export default ProjectCard;

@@ -64,6 +64,15 @@ const config: GatsbyConfig = {
     `gatsby-plugin-image`,
     `gatsby-plugin-sharp`,
     `gatsby-transformer-sharp`,
+    {
+      resolve: `gatsby-plugin-google-gtag`,
+      options: {
+        trackingIds: ["G-2XYKVWN08T"],
+        pluginConfig: {
+          head: true,
+        },
+      },
+    },
   ].filter(Boolean) as Array<PluginRef>,
 };
 

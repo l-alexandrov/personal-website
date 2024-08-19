@@ -23,4 +23,20 @@ const Cara = () => (
 
 export default Cara;
 
-export const Head: HeadFC = () => <Seo />;
+export const Head: HeadFC = () => (
+  <Seo
+    children={
+      process.env.NODE_ENV === "production" ? (
+        <>
+          {/* Start cookieyes banner */}
+          <script
+            id="cookieyes"
+            type="text/javascript"
+            src="https://cdn-cookieyes.com/client_data/406ed30202f70e7c0c8ae9c0/script.js"
+          ></script>
+          {/* End cookieyes banner */}
+        </>
+      ) : null
+    }
+  />
+);

@@ -73,6 +73,7 @@ const config: GatsbyConfig = {
         },
       },
     },
+    `gatsby-plugin-sitemap`, // Implement blog posts crawling using https://www.gatsbyjs.com/plugins/gatsby-plugin-sitemap#example
   ].filter(Boolean) as Array<PluginRef>,
 };
 

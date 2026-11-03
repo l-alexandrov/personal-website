@@ -64,15 +64,7 @@ const config: GatsbyConfig = {
     `gatsby-plugin-image`,
     `gatsby-plugin-sharp`,
     `gatsby-transformer-sharp`,
-    {
-      resolve: `gatsby-plugin-google-gtag`,
-      options: {
-        trackingIds: ["G-2XYKVWN08T"],
-        pluginConfig: {
-          head: true,
-        },
-      },
-    },
+    // Google Analytics is loaded via Partytown in gatsby-ssr.tsx (page views in gatsby-browser.tsx)
     `gatsby-plugin-sitemap`, // Implement blog posts crawling using https://www.gatsbyjs.com/plugins/gatsby-plugin-sitemap#example
   ].filter(Boolean) as Array<PluginRef>,
 };

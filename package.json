@@ -19,7 +19,6 @@
     "@builder.io/partytown": "^0.10.3",
     "@lekoarts/gatsby-theme-cara": "^5.1.7",
     "gatsby": "^5.16.1",
-    "gatsby-plugin-google-gtag": "^5.16.0",
     "gatsby-plugin-image": "^3.16.0",
     "gatsby-plugin-manifest": "^5.16.0",
     "gatsby-plugin-sharp": "^5.16.0",

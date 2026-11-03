@@ -7,7 +7,7 @@ Personal website of Lyuboslav Alexandrov (https://lyuboo.com): a one-page portfo
 - Base theme: `@lekoarts/gatsby-theme-cara` (parallax one-pager), customised through **component shadowing**
 - Styling: Theme UI (`sx` prop) on top of `@theme-ui/preset-tailwind`
 - Blog CMS: Static CMS (`@staticcms/core`) at `/admin`, GitHub backend, editorial workflow
-- Analytics: `gatsby-plugin-google-gtag`, Partytown (lib files copied to `static/~partytown` in `onPreBuild`)
+- Analytics: GA4 loaded through Partytown only, in `gatsby-ssr.tsx`, with page views sent from `gatsby-browser.tsx`. Partytown lib files are copied to `static/~partytown` in `onPreBuild`. Don't re-add `gatsby-plugin-google-gtag`, because it would load gtag a second time.
 
 ## Commands
 Use **npm**, not yarn. CI chooses the package manager by checking for `package-lock.json`.

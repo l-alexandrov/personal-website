@@ -1,6 +1,6 @@
 import React from "react";
 import { GatsbySSR, withPrefix } from "gatsby";
-import { Partytown } from "@builder.io/partytown/react";
+import { Partytown } from "@qwik.dev/partytown/react";
 
 // You might prefer to add these as an env vars
 const ORIGIN = "https://www.googletagmanager.com";

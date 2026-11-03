@@ -2,7 +2,7 @@ import { createPages } from "@lekoarts/gatsby-theme-cara/gatsby-node.mjs";
 import { createRemoteFileNode } from "gatsby-source-filesystem";
 import { GatsbyNode } from "gatsby";
 import path from "path";
-import { copyLibFiles } from "@builder.io/partytown/utils";
+import { copyLibFiles } from "@qwik.dev/partytown/utils";
 
 export const onPreBuild = async () => {
   await copyLibFiles(path.join(__dirname, "static", "~partytown"));

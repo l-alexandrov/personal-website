@@ -1,0 +1,107 @@
+---
+import { getEntry, render } from "astro:content";
+import Icon from "../Icon.astro";
+import Section from "../Section.astro";
+
+const contact = await getEntry("contact", "contact");
+if (!contact) throw new Error("Missing src/content/home/contact.md");
+const { Content } = await render(contact);
+const { title, location, socials } = contact.data;
+---
+
+<Section id="contact" title={title} glyph="circle" color="green">
+  <p class="location"><Icon name="pin" class="ico" />Based in {location}</p>
+  <div class="intro"><Content /></div>
+  <ul class="socials">
+    {
+      socials.map(({ network, label, handle, url }) => {
+        const external = !url.startsWith("mailto:");
+        return (
+          <li>
+            <a
+              class="social"
+              href={url}
+              target={external ? "_blank" : undefined}
+              rel={external ? "noopener" : undefined}
+            >
+              <Icon name={network} />
+              <span class="net">{label}</span>
+              <span class="handle">{handle}</span>
+              {external && <span class="sr-only"> (opens in a new tab)</span>}
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</Section>
+
+<style>
+  .location {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .location .ico {
+    color: var(--primary);
+  }
+
+  .intro {
+    color: var(--muted);
+  }
+
+  .intro :global(a) {
+    font-weight: 600;
+    word-break: break-all;
+  }
+
+  .socials {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 12px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .social {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 12px;
+    width: 100%;
+    min-height: 48px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--heading);
+    text-decoration: none;
+  }
+
+  .social:hover {
+    border-color: var(--primary);
+    color: var(--heading);
+  }
+
+  .social svg {
+    grid-row: span 2;
+    width: 22px;
+    height: 22px;
+  }
+
+  .net {
+    font-weight: 600;
+  }
+
+  .handle {
+    overflow-wrap: anywhere;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+</style>

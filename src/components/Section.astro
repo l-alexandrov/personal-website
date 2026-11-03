@@ -1,0 +1,62 @@
+---
+// A home page section with the Workbench heading: a coloured shape glyph, the title and an optional note.
+import Icon, { type IconName } from "./Icon.astro";
+
+interface Props {
+  id: string;
+  title: string;
+  glyph: IconName;
+  // A shape colour token from tokens.css, without the --s- prefix.
+  color: "red" | "blue" | "orange" | "yellow" | "pink" | "purple" | "green";
+  note?: string;
+}
+
+const { id, title, glyph, color, note } = Astro.props;
+---
+
+<section class="section" id={id} aria-labelledby={`${id}-title`}>
+  <div class="wrap stack">
+    <div class="section-head">
+      <Icon name={glyph} class="glyph" style={`--c: var(--s-${color})`} />
+      <h2 id={`${id}-title`}>{title}</h2>
+      {note && <span class="note">{note}</span>}
+    </div>
+    <slot />
+  </div>
+</section>
+
+<style>
+  .section {
+    padding-block: clamp(48px, 7vw, 88px);
+  }
+
+  .section-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 18px;
+    margin-bottom: 8px;
+    border-top: 1px solid var(--line);
+  }
+
+  .glyph {
+    width: 22px;
+    height: 22px;
+    color: var(--c);
+    --sw: 3;
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .note {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+</style>

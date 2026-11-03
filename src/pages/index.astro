@@ -1,35 +1,14 @@
 ---
-// Placeholder content until the home sections land (migration step 3).
+import About from "../components/home/About.astro";
+import Contact from "../components/home/Contact.astro";
+import Hero from "../components/home/Hero.astro";
+import Projects from "../components/home/Projects.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="Lyuboslav Alexandrov">
-  <section class="wrap stack placeholder">
-    <h1>Hi, I'm Lyuboslav!</h1>
-    <p>I make your web applications work, using Laravel and PHP.</p>
-    <div class="btn-row">
-      <a class="btn btn-primary" href="#projects">See my work</a>
-      <a class="btn btn-ghost" href="#contact">Get in touch</a>
-    </div>
-  </section>
+  <Hero />
+  <About />
+  <Projects />
+  <Contact />
 </BaseLayout>
-
-<style>
-  .placeholder {
-    --gap: 24px;
-    padding-block: clamp(40px, 8vw, 112px);
-  }
-
-  h1 {
-    font-size: clamp(2.6rem, 6vw, 5rem);
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    line-height: 1;
-  }
-
-  p {
-    font-size: clamp(1.125rem, 1.7vw, 1.3125rem);
-    color: var(--muted);
-    max-width: 32ch;
-  }
-</style>

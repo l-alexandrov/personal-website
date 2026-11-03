@@ -1,0 +1,132 @@
+---
+import { getEntry, render } from "astro:content";
+import { Image } from "astro:assets";
+import Icon from "../Icon.astro";
+
+const intro = await getEntry("intro", "intro");
+if (!intro) throw new Error("Missing src/content/home/intro.md");
+const { Content } = await render(intro);
+const { title, photo, photoAlt, actions } = intro.data;
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap">
+    <div class="copy stack">
+      <h1 id="hero-title">{title}</h1>
+      <div class="lede"><Content /></div>
+      <div class="btn-row">
+        {
+          actions.map((action, i) => (
+            <a class:list={["btn", i === 0 ? "btn-primary" : "btn-ghost"]} href={action.href}>
+              {action.label}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+    <figure class="photo">
+      <Image
+        src={photo}
+        alt={photoAlt}
+        widths={[132, 264, 340, photo.width]}
+        sizes="(min-width: 860px) 340px, 132px"
+        loading="eager"
+        fetchpriority="high"
+      />
+      <div class="shapes" aria-hidden="true">
+        <Icon name="triangle" style="left: 0; top: 22px; width: 36px; height: 36px; color: var(--s-orange)" />
+        <Icon name="hexa" style="left: 44px; top: 0; width: 30px; height: 30px; color: var(--s-red)" />
+        <Icon name="circle" style="left: 86px; top: 30px; width: 30px; height: 30px; color: var(--s-green)" />
+      </div>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(40px, 8vw, 112px) clamp(48px, 8vw, 104px);
+  }
+
+  .wrap {
+    display: grid;
+    grid-template-areas: "photo" "copy";
+    align-items: center;
+    gap: 32px 80px;
+  }
+
+  .copy {
+    grid-area: copy;
+    --gap: 24px;
+  }
+
+  h1 {
+    font-size: clamp(2.6rem, 6vw, 5rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .lede {
+    max-width: 32ch;
+    font-size: clamp(1.125rem, 1.7vw, 1.3125rem);
+    color: var(--muted);
+  }
+
+  .btn-row {
+    padding-top: 8px;
+  }
+
+  .btn {
+    min-height: 52px;
+    padding: 0 26px;
+    font-size: 1.0625rem;
+  }
+
+  .photo {
+    grid-area: photo;
+    position: relative;
+    width: 132px;
+    aspect-ratio: 1;
+    margin: 0;
+  }
+
+  .photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 30%;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+
+  /* A small cluster of the site's shapes above the photo, on wide screens only. */
+  .shapes {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: -92px;
+    width: 120px;
+    height: 72px;
+  }
+
+  .shapes svg {
+    position: absolute;
+    --sw: 2.5;
+  }
+
+  @media (min-width: 860px) {
+    .wrap {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+      grid-template-areas: "copy photo";
+    }
+
+    .photo {
+      width: min(100%, 340px);
+      justify-self: end;
+    }
+
+    .shapes {
+      display: block;
+    }
+  }
+</style>

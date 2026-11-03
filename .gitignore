@@ -70,3 +70,5 @@ public
 
 # Partytown
 static/~partytown
+# Claude Code (personal overrides)
+.claude/settings.local.json

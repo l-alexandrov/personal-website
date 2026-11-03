@@ -1,3 +1,5 @@
+import partytown from "@astrojs/partytown";
+import sitemap from "@astrojs/sitemap";
 import { defineConfig, fontProviders } from "astro/config";
 
 // Unicode ranges of the Fontsource subsets we ship: Latin, and Cyrillic for the
@@ -45,6 +47,12 @@ export default defineConfig({
   build: {
     format: "directory",
   },
+  integrations: [
+    // Writes sitemap-index.xml and sitemap-0.xml, the same files the Gatsby site had.
+    sitemap(),
+    // Runs GA4 (src/components/Analytics.astro) in a web worker; gtag calls are forwarded to it.
+    partytown({ config: { forward: ["dataLayer.push", "gtag"] } }),
+  ],
   fonts: [
     {
       name: "Geologica",

@@ -68,7 +68,5 @@ dist
 .vscode
 .DS_Store
 
-# Partytown
-public/~partytown
 # Claude Code (personal overrides)
 .claude/settings.local.json

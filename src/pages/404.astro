@@ -1,0 +1,51 @@
+---
+// Built as dist/404.html, which GitHub Pages serves for unknown URLs.
+import Icon from "../components/Icon.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="404 - Not Found" noindex>
+  <section class="wrap stack not-found" aria-labelledby="not-found-title">
+    <div class="shapes" aria-hidden="true">
+      <Icon name="triangle" style="color: var(--s-orange)" />
+      <Icon name="hexa" style="color: var(--s-red)" />
+      <Icon name="circle" style="color: var(--s-green)" />
+    </div>
+    <h1 id="not-found-title">404 - Page not found</h1>
+    <p>Go back to <a href="/">homepage</a>.</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    --gap: 24px;
+    padding-block: clamp(64px, 12vw, 160px);
+  }
+
+  .shapes {
+    display: flex;
+    gap: 14px;
+  }
+
+  .shapes svg {
+    width: 32px;
+    height: 32px;
+    --sw: 2.5;
+  }
+
+  h1 {
+    font-size: clamp(2.25rem, 5vw, 4rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  p {
+    font-size: clamp(1.125rem, 1.7vw, 1.3125rem);
+    color: var(--muted);
+  }
+
+  a {
+    font-weight: 600;
+  }
+</style>

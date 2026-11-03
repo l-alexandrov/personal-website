@@ -1,0 +1,36 @@
+---
+// schema.org Person for the home page, built from the same content as the visible sections.
+import { getEntry } from "astro:content";
+import { getImage } from "astro:assets";
+import { site, siteDescription } from "../../site";
+
+const [intro, contact] = await Promise.all([getEntry("intro", "intro"), getEntry("contact", "contact")]);
+if (!intro || !contact) throw new Error("Missing home section content");
+
+const photo = await getImage({ src: intro.data.photo, width: 400, format: "jpg" });
+const [locality, country] = contact.data.location.split(",").map((part) => part.trim());
+const email = contact.data.socials.find((social) => social.network === "mail");
+
+const person = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: site.name,
+  url: Astro.site?.href,
+  jobTitle: site.jobTitle,
+  description: await siteDescription(),
+  image: new URL(photo.src, Astro.site).href,
+  ...(email && { email: email.url }),
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: locality,
+    ...(country && { addressCountry: country }),
+  },
+  knowsAbout: ["Laravel", "PHP", "CI/CD", "WebSockets", "Project management"],
+  sameAs: contact.data.socials.filter((social) => social.network !== "mail").map((social) => social.url),
+};
+
+// Escape "<" so the JSON can never close the script element early.
+const json = JSON.stringify(person).replace(/</g, "\\u003c");
+---
+
+<script type="application/ld+json" set:html={json} />

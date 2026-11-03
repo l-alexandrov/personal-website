@@ -54,7 +54,7 @@ The blog is **work in progress** on branch `Feature/Blog`:
 - Content languages: `en` (default) and `bg`.
 
 ## Deploy
-Pushing to `master` runs `.github/workflows/cd.yml`, which builds with `PREFIX_PATHS=true` and deploys to GitHub Pages. CI takes its Node version from `.nvmrc` (24), so use the same version locally (`nvm use`).
+Pushing to `master` runs `.github/workflows/cd.yml`, which builds with `PREFIX_PATHS=true` and deploys to GitHub Pages. CI takes its Node version from `.nvmrc` (24), so use the same version locally (`nvm use`). Actions are pinned to commit SHAs. Dependabot (`.github/dependabot.yml`) opens weekly grouped PRs for npm and Actions.
 
 ## Git
 - Branches: `Feature/<Name>`, `Chore/<name>`. PRs target `master`.

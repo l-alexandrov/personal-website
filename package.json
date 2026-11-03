@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "type": "module",
   "author": "Lyuboslav Alexandrov",
-  "license": "0BSD",
+  "license": "MIT",
   "scripts": {
     "dev": "astro dev",
     "build": "astro check && astro build",

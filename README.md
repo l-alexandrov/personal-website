@@ -1,13 +1,13 @@
 # 🌐 My Personal Website
 
-Welcome to the repository for my personal website! This site is statically generated with [Gatsby](https://www.gatsbyjs.com/), a blazing-fast framework for building static websites with React. 🚀
+Welcome to the repository for my personal website! This site is statically generated with [Astro](https://astro.build/), a fast framework for content-driven websites that ships zero JavaScript by default. 🚀
 
 ## 🛠️ Tech Stack
 
-- **Framework**: [Gatsby](https://www.gatsbyjs.com/)
-- **Language**: [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) / [TypeScript](https://www.typescriptlang.org/)
-- **Styling**: [Theme UI](https://theme-ui.com/)
-- **Content**: [Markdown](https://www.markdownguide.org/)
+- **Framework**: [Astro](https://astro.build/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: Plain CSS with custom properties
+- **Content**: [Markdown](https://www.markdownguide.org/) in Astro content collections
 - **Hosting**: [GitHub pages](https://www.github.com/)
 
 ## 🚀 Features
@@ -27,27 +27,30 @@ Welcome to the repository for my personal website! This site is statically gener
    cd personal-website
    ```
 
-2. **Install dependencies**:
+2. **Install dependencies** (Node 24, see `.nvmrc`):
 
    ```bash
+   nvm use
    npm install
    ```
 
 3. **Run the development server**:
 
    ```bash
-    npx gatsby develop
-    ```
+   npm run dev
+   ```
 
-4. **Open your browser** and visit `http://localhost:8000` to see your website in action!
+4. **Open your browser** and visit `http://localhost:4321` to see your website in action!
 
 5. **Building and Deployment**:
 
    To create a production build, run:
 
    ```bash
-   npx gatsby build
+   npm run build
    ```
+
+   This type-checks the project and writes the site to `dist/`. Preview it with `npm run preview`. Pushing to `master` deploys it to GitHub Pages.
 
 ## 🤝 Contributing
 
@@ -59,8 +62,8 @@ This project is licensed under the MIT License. See the LICENSE file for more de
 
 ## 🙏 Acknowledgements
 
-- Thanks to the [Gatsby](https://github.com/gatsbyjs/gatsby)  team for the awesome framework
-- [LekoArts](https://github.com/LekoArts)
+- Thanks to the [Astro](https://github.com/withastro/astro) team for the awesome framework
+- [LekoArts](https://github.com/LekoArts), whose Cara theme powered the earlier Gatsby version of this site
 - Shoutout to the creators of the plugins and dependencies used in this project
 
 ## Made with ❤️ by Lyuboslav Alexandrov

@@ -1,0 +1,33 @@
+# Type-checks and builds the site for every pull request, so problems show up before merging to master.
+name: Check and build
+
+on:
+  pull_request:
+    branches: ["master"]
+
+permissions:
+  contents: read
+
+# Only the latest commit of a pull request matters; cancel older runs.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ASTRO_TELEMETRY_DISABLED: 1
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: ".nvmrc"
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Check and build
+        run: npm run build

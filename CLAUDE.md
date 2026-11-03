@@ -54,7 +54,7 @@ The blog is **work in progress** on branch `Feature/Blog`:
 - Content languages: `en` (default) and `bg`.
 
 ## Deploy
-Pushing to `master` runs `.github/workflows/cd.yml`, which builds on Node 20 with `PREFIX_PATHS=true` and deploys to GitHub Pages. `.nvmrc` says 18, which doesn't match CI.
+Pushing to `master` runs `.github/workflows/cd.yml`, which builds with `PREFIX_PATHS=true` and deploys to GitHub Pages. CI takes its Node version from `.nvmrc` (24), so use the same version locally (`nvm use`).
 
 ## Git
 - Branches: `Feature/<Name>`, `Chore/<name>`. PRs target `master`.

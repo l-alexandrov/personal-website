@@ -29,7 +29,7 @@
     "react-social-icons": "^6.27.0"
   },
   "devDependencies": {
-    "@types/node": "^18.19.130",
+    "@types/node": "^24.19.2",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
     "ajv": "^8.20.0",

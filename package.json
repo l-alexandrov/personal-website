@@ -9,8 +9,6 @@
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop",
-    "develop:cypress": "cross-env CYPRESS_SUPPORT=y yarn develop",
-    "build:cypress": "cross-env CYPRESS_SUPPORT=y yarn build",
     "start": "gatsby develop",
     "serve": "gatsby serve",
     "clean": "gatsby clean"
@@ -35,7 +33,6 @@
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
     "ajv": "^8.20.0",
-    "cross-env": "^7.0.3",
     "gatsby-plugin-perf-budgets": "^0.0.18",
     "gatsby-plugin-webpack-bundle-analyser-v2": "^1.1.32",
     "typescript": "^5.9.3"

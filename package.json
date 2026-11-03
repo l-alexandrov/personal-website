@@ -35,7 +35,7 @@
     "ajv": "^8.20.0",
     "gatsby-plugin-perf-budgets": "^0.0.18",
     "gatsby-plugin-webpack-bundle-analyser-v2": "^1.1.32",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   },
   "overrides": {
     "webpack-dev-middleware": "^5.3.4",

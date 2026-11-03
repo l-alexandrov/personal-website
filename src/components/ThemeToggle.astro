@@ -50,6 +50,8 @@ import Icon from "./Icon.astro";
   const root = document.documentElement;
   const lightQuery = matchMedia("(prefers-color-scheme: light)");
   const buttons = document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]");
+  // Remembers a click even when storage is blocked, so OS changes don't override it.
+  let picked = false;
 
   function storedTheme(): string | null {
     try {
@@ -71,6 +73,7 @@ import Icon from "./Icon.astro";
     button.addEventListener("click", () => {
       const next: Theme = root.dataset.theme === "dark" ? "light" : "dark";
       apply(next);
+      picked = true;
       try {
         localStorage.setItem("theme", next);
       } catch {
@@ -80,6 +83,6 @@ import Icon from "./Icon.astro";
   );
 
   lightQuery.addEventListener("change", (event) => {
-    if (!storedTheme()) apply(event.matches ? "light" : "dark");
+    if (!picked && !storedTheme()) apply(event.matches ? "light" : "dark");
   });
 </script>

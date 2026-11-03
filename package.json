@@ -9,39 +9,42 @@
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop",
-    "develop:cypress": "cross-env CYPRESS_SUPPORT=y yarn develop",
-    "build:cypress": "cross-env CYPRESS_SUPPORT=y yarn build",
     "start": "gatsby develop",
     "serve": "gatsby serve",
     "clean": "gatsby clean"
   },
   "dependencies": {
-    "@builder.io/partytown": "^0.10.2",
-    "@lekoarts/gatsby-theme-cara": "^5.1.4",
-    "gatsby": "^5.13.3",
-    "gatsby-plugin-google-gtag": "^5.13.1",
-    "gatsby-plugin-image": "^3.13.1",
-    "gatsby-plugin-manifest": "^5.13.1",
-    "gatsby-plugin-sharp": "^5.13.1",
-    "gatsby-plugin-sitemap": "^6.13.1",
+    "@lekoarts/gatsby-theme-cara": "^5.1.7",
+    "@qwik.dev/partytown": "^1.0.3",
+    "gatsby": "^5.16.1",
+    "gatsby-plugin-image": "^3.16.0",
+    "gatsby-plugin-manifest": "^5.16.0",
+    "gatsby-plugin-sharp": "^5.16.0",
+    "gatsby-plugin-sitemap": "^6.16.0",
     "gatsby-plugin-webpack-statoscope": "^1.0.3",
-    "gatsby-source-filesystem": "^5.13.1",
-    "gatsby-transformer-sharp": "^5.13.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-social-icons": "^6.16.0"
+    "gatsby-source-filesystem": "^5.16.0",
+    "gatsby-transformer-sharp": "^5.16.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-social-icons": "^6.27.0"
   },
   "devDependencies": {
-    "@types/node": "^18.19.13",
-    "@types/react": "^18.2.51",
-    "@types/react-dom": "^18.2.18",
-    "ajv": "^7.2.4",
-    "cross-env": "^7.0.3",
+    "@types/node": "^24.19.2",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "ajv": "^8.20.0",
     "gatsby-plugin-perf-budgets": "^0.0.18",
     "gatsby-plugin-webpack-bundle-analyser-v2": "^1.1.32",
-    "typescript": "^5.3.3"
+    "typescript": "^5.9.3"
   },
   "overrides": {
-    "webpack-dev-middleware": "^5.3.4"
+    "webpack-dev-middleware": "^5.3.4",
+    "ejs": "^3.1.10",
+    "sharp": "^0.35.5",
+    "lodash": "^4.18.1",
+    "immutable": "~3.8.4",
+    "tmp": "^0.2.7",
+    "path-to-regexp": "^0.1.13",
+    "cookie": "^0.7.2"
   }
 }

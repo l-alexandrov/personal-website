@@ -22,6 +22,11 @@ Use **npm**, not yarn. CI chooses the package manager by checking for `package-l
 
 There are no tests and no linter. **`npm run build` is the verification step.** It has to succeed, and you should read the perf-budget warnings it prints.
 
+## Dependencies
+- `.npmrc` sets `legacy-peer-deps=true`, so peer dependencies are not installed. The root devDependency `ajv@^8` exists so that the hoisted `ajv-keywords@5`, which `schema-utils@4` and `terser-webpack-plugin` need, can find `ajv/dist/compile/codegen`. Don't remove it, or the build fails.
+- `overrides` in `package.json` force patched transitive versions, including `sharp@^0.35` (Gatsby pins 0.32) and `ejs@^3` (pulled in by `gatsby-plugin-perf-budgets`). Re-check `npm audit` and the build after bumping Gatsby, and drop an override once upstream catches up.
+- React stays on 18, because the cara theme peers on `react ^18`.
+
 ## Where things live
 - `gatsby-config.ts`: `siteMetadata` (SEO title, description, URL), manifest, plugins. Loads `.env` through `dotenv`.
 - `gatsby-node.ts`: `onPreBuild` (Partytown) and a `remoteImage(url)` GraphQL resolver.

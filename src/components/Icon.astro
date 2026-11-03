@@ -1,0 +1,31 @@
+---
+// Decorative icon or shape from the inline sprite (Sprite.astro). Always hidden from assistive tech,
+// so give the surrounding link or button its own accessible name.
+import type { HTMLAttributes } from "astro/types";
+
+export type IconName =
+  | "triangle"
+  | "hexa"
+  | "box"
+  | "cross"
+  | "updown"
+  | "circle"
+  | "arrow"
+  | "ext"
+  | "pin"
+  | "sun"
+  | "moon"
+  | "mail"
+  | "linkedin"
+  | "github"
+  | "x";
+
+interface Props extends HTMLAttributes<"svg"> {
+  name: IconName;
+}
+
+// The rest props carry the parent's scoped-style attribute, so parents can style the icon by class.
+const { name, ...rest } = Astro.props;
+---
+
+<svg aria-hidden="true" focusable="false" {...rest}><use href={`#i-${name}`}></use></svg>

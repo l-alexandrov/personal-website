@@ -1,0 +1,98 @@
+/*
+ * Design tokens. Dark is the default; light applies when the visitor picks it
+ * (data-theme="light") or, before any choice, when the OS prefers light.
+ * The light values appear twice on purpose: once for the media query, once for the attribute.
+ */
+:root {
+  color-scheme: dark;
+
+  /* Surfaces and text */
+  --bg: #141821;
+  --surface: #1b2030;
+  --surface-2: #242b3d;
+  --line: #2e3548;
+  --fg: #d9dfe9;
+  --heading: #ffffff;
+  --muted: #9aa5b8;
+
+  /* Identity */
+  --primary: #f6ad55;
+  --primary-strong: #fbd38d;
+  --on-primary: #141821;
+  --secondary: #5a67d8;
+  --secondary-text: #a3bffa;
+
+  /* Shape colours (Tailwind palette from the original site) */
+  --s-red: #e53e3e;
+  --s-blue: #4299e1;
+  --s-orange: #ed8936;
+  --s-yellow: #ecc94b;
+  --s-pink: #ed64a6;
+  --s-purple: #805ad5;
+  --s-green: #48bb78;
+  --s-bright: #ffffff;
+  --s-dim: #4a5568;
+  --s-faint: #343c50;
+
+  /* Code blocks stay dark in both themes */
+  --code-bg: #0d1017;
+  --code-fg: #e2e8f0;
+  --code-line: #232a3a;
+
+  /* Type: the families and their fallbacks come from the fonts config in astro.config.ts */
+  --font-body: var(--font-geologica);
+  --font-display: var(--font-body);
+  --font-mono: var(--font-jetbrains-mono);
+
+  /* Shape and layout */
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-btn: 8px;
+  --maxw: 1200px;
+  --gutter: max(clamp(16px, 4vw, 40px), env(safe-area-inset-left, 0px));
+  --gutter-r: max(clamp(16px, 4vw, 40px), env(safe-area-inset-right, 0px));
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg: #f7fafc;
+    --surface: #ffffff;
+    --surface-2: #edf2f7;
+    --line: #dde3ec;
+    --fg: #2d3748;
+    --heading: #10141f;
+    --muted: #5b6679;
+    --primary: #c05621;
+    --primary-strong: #9c4221;
+    --on-primary: #ffffff;
+    --secondary-text: #4c51bf;
+    --s-bright: #a0aec0;
+    --s-dim: #a0aec0;
+    --s-faint: #cbd5e0;
+    --code-bg: #1a202c;
+    --code-fg: #e2e8f0;
+    --code-line: #2d3748;
+  }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f7fafc;
+  --surface: #ffffff;
+  --surface-2: #edf2f7;
+  --line: #dde3ec;
+  --fg: #2d3748;
+  --heading: #10141f;
+  --muted: #5b6679;
+  --primary: #c05621;
+  --primary-strong: #9c4221;
+  --on-primary: #ffffff;
+  --secondary-text: #4c51bf;
+  --s-bright: #a0aec0;
+  --s-dim: #a0aec0;
+  --s-faint: #cbd5e0;
+  --code-bg: #1a202c;
+  --code-fg: #e2e8f0;
+  --code-line: #2d3748;
+}

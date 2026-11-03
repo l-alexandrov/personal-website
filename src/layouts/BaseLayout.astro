@@ -1,0 +1,70 @@
+---
+// Page shell: head, theme bootstrap, fonts, sprite, header and footer.
+// The full SEO head (Open Graph, schema.org, manifest) is added in a later migration step.
+import { Font } from "astro:assets";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import Sprite from "../components/Sprite.astro";
+import ThemeScript from "../components/ThemeScript.astro";
+import "../styles/tokens.css";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  lang?: "en" | "bg";
+}
+
+const { title, description, lang = "en" } = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <ThemeScript />
+    <!-- No preloads: text paints at once in the metric-matched fallback, then swaps. -->
+    <Font cssVariable="--font-geologica" />
+    <Font cssVariable="--font-jetbrains-mono" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <slot name="head" />
+  </head>
+  <body>
+    <Sprite />
+    <a class="skip" href="#content">Skip to content</a>
+    <Header />
+    <main id="content" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .skip {
+    position: absolute;
+    left: var(--gutter);
+    top: -100px;
+    z-index: 50;
+    padding: 10px 16px;
+    border-radius: var(--radius-btn);
+    background: var(--primary);
+    color: var(--on-primary);
+    font-weight: 600;
+  }
+
+  .skip:focus {
+    top: calc(12px + env(safe-area-inset-top, 0px));
+  }
+
+  main:focus {
+    outline: none;
+  }
+</style>

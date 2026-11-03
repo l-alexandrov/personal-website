@@ -1,0 +1,91 @@
+---
+import ThemeToggle from "./ThemeToggle.astro";
+
+// The blog link is added together with the blog (part B of the migration).
+const nav = [
+  { label: "Projects", href: "/#projects" },
+  { label: "About", href: "/#about" },
+  { label: "Contact", href: "/#contact" },
+];
+
+const current = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="wrap">
+    <nav class="site-nav" aria-label="Main">
+      <ul>
+        {
+          nav.map(({ label, href }) => (
+            <li>
+              <a href={href} aria-current={href === current ? "page" : undefined}>
+                {label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div class="tools">
+      <ThemeToggle />
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: relative;
+    z-index: 5;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* One row: links on the left, theme switch on the right. */
+  .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 18px;
+  }
+
+  .site-nav {
+    min-width: 0;
+  }
+
+  /* The links scroll sideways if they ever outgrow a narrow screen. The negative margin
+     lines the first link's text up with the page content. */
+  .site-nav ul {
+    display: flex;
+    gap: 4px;
+    list-style: none;
+    margin: 0 0 0 -14px;
+    padding: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .site-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 14px;
+    color: var(--fg);
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: var(--radius-btn);
+    white-space: nowrap;
+  }
+
+  .site-nav a:hover,
+  .site-nav a[aria-current="page"] {
+    color: var(--heading);
+    background: var(--surface-2);
+  }
+
+  .tools {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 8px;
+  }
+</style>

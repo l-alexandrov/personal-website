@@ -157,6 +157,19 @@ const theme = merge(tailwind, {
       },
     },
   },
+  cards: {
+    primary: {
+      padding: 2,
+      borderRadius: 8,
+      boxShadow: "0 0 8px rgba(0, 0, 0, 0.125)",
+    },
+    compact: {
+      padding: 1,
+      borderRadius: 2,
+      border: "1px solid",
+      borderColor: "muted",
+    },
+  },
 });
 
 export default theme;

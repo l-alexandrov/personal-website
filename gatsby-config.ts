@@ -74,6 +74,40 @@ const config: GatsbyConfig = {
       },
     },
     `gatsby-plugin-sitemap`, // Implement blog posts crawling using https://www.gatsbyjs.com/plugins/gatsby-plugin-sitemap#example
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: `${__dirname}/content/blog`,
+        name: `blog`,
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `images`,
+        path: `${__dirname}/images`,
+      },
+    },
+    {
+      resolve: `gatsby-transformer-remark`,
+      options: {
+        plugins: [
+          {
+            resolve: `gatsby-remark-images`,
+            options: {
+              maxWidth: 630,
+            },
+          },
+          {
+            resolve: `gatsby-remark-responsive-iframe`,
+            options: {
+              wrapperStyle: `margin-bottom: 1.0725rem`,
+            },
+          },
+          `gatsby-remark-prismjs`,
+        ],
+      },
+    },
   ].filter(Boolean) as Array<PluginRef>,
 };
 

@@ -8,34 +8,41 @@ description: Update the portfolio one-pager content: intro/hero text, about sect
 ## Where the content lives
 | Section | File |
 |---|---|
-| Intro / hero | `src/@lekoarts/gatsby-theme-cara/sections/intro.mdx` |
-| About | `src/@lekoarts/gatsby-theme-cara/sections/about.mdx` |
-| Projects | `src/@lekoarts/gatsby-theme-cara/sections/projects.mdx` |
-| Contact | `src/@lekoarts/gatsby-theme-cara/sections/contact.mdx` |
-| SEO title, description, headline | `gatsby-config.ts` → `siteMetadata` **and** `gatsby-plugin-manifest` options |
-| Social icons / footer | `src/@lekoarts/gatsby-theme-cara/components/footer.tsx` |
+| Hero: headline, intro line, photo, buttons | `src/content/home/intro.md` |
+| About: quote and paragraphs | `src/content/home/about.md` |
+| Projects | `src/content/projects/<name>.md`, one file per project |
+| Contact: location, intro line, social links | `src/content/home/contact.md` |
+| SEO title, description, job title, share image | `src/site.ts` |
+| Logos and photo | `src/assets/` |
 
-These are MDX files. The components available inside them come from cara's `mdx-components`.
+The schemas are in `src/content.config.ts`. Read it before editing: the build fails on a missing or mistyped field, which is the point.
 
-## Project cards
-```mdx
-<ProjectCard
-  title="Name"
-  link="https://example.com"
-  rel="nofollow noopener noreferrer"   // optional; default is "noreferrer noopener"
->
-  One or two sentences: what it does and who it's for.
-</ProjectCard>
+## Projects
+```markdown
+---
+title: Name
+url: https://example.com
+rel: nofollow noopener noreferrer   # optional; default "noopener noreferrer"
+order: 6                            # position in the list
+current: true                       # optional; shows the "Current" badge
+lang: bg                            # optional; when the name isn't English
+logo: ../../assets/projects/<name>.png
+logoBg: "#ffffff"                   # plate colour behind the logo
+---
+
+One or two sentences: what it does and who it's for.
 ```
-- Keep descriptions short (about 2 lines) and in the same tone as the existing cards.
-- Use `rel="follow"` only for projects you want to pass SEO weight to.
-- **Known gap:** the shadowed `components/project-card.tsx` renders an `image` prop (a React node), but `projects.mdx` passes `imageSrc` (a string), so logos currently don't render. Tell the user about this when touching project images. Don't silently switch props.
+- A logo is required. Store it in `src/assets/projects/` (don't hotlink) and pick a `logoBg` that the logo reads on in both themes.
+- Keep descriptions short (about 2 lines) and in the same tone as the existing ones.
+- Use a `rel` without `noreferrer`/`nofollow` only for projects that should get referrer data and SEO weight (Bimbala uses `noopener`).
+- Renumber `order` when inserting a project between others.
 
-## Changing the headline or role
-If the role or specialisation changes, update every place that repeats it:
-- `intro.mdx`
-- `siteMetadata.siteTitleAlt`, `siteHeadline`, `siteDescription`
-- the manifest `name` and `description`
+## Changing the headline, role or location
+Update every place that repeats it:
+- `intro.md` (headline and intro line)
+- `src/site.ts`: `title`, `jobTitle`, and the summary sentence used by `siteDescription()`
+- The location lives only in `contact.md`; the meta description, manifest and schema.org address are built from it.
+- The share image `public/ogImage.png` shows the headline too. Mention it if the headline changes.
 
 ## Verify
-Run `npm run build`, then `npm run serve`, and check the section renders and the parallax offsets still look right. Long text can overflow the cara parallax sections. If it does, the offsets are in `templates/cara.tsx`.
+Run `npm run build` (0 errors, 0 warnings), then look at the page with `npm run dev` in both themes at phone and desktop widths. Check `dist/index.html` for the updated meta description when SEO text changed.

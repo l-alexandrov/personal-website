@@ -3,11 +3,11 @@
   "permissions": {
     "allow": [
       "Bash(npm run build)",
-      "Bash(npm run build:*)",
-      "Bash(npm run develop)",
-      "Bash(npm run serve)",
+      "Bash(npm run dev)",
+      "Bash(npm run preview)",
+      "Bash(npm run check)",
       "Bash(npm run clean)",
-      "Bash(npx gatsby:*)",
+      "Bash(npx astro:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",

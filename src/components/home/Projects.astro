@@ -1,0 +1,185 @@
+---
+import { getCollection, render } from "astro:content";
+import { Image } from "astro:assets";
+import Icon from "../Icon.astro";
+import Section from "../Section.astro";
+
+const projects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order);
+
+const items = await Promise.all(
+  projects.map(async (project) => ({
+    ...project.data,
+    id: project.id,
+    // Host as written in the content file, so "закъсах.бг" is not shown in its punycode form.
+    domain: project.data.url.replace(/^https?:\/\/(www\.)?/, "").replace(/[/?#].*$/, ""),
+    Content: (await render(project)).Content,
+  })),
+);
+---
+
+<Section id="projects" title="Projects" glyph="triangle" color="orange" note={`${items.length} projects`}>
+  <ul class="list">
+    {
+      items.map(({ title, url, rel, current, lang, logo, logoBg, domain, Content }) => (
+        <li>
+          <div class="project">
+            <div class="plate" style={logoBg && `--plate: ${logoBg}`}>
+              <Image src={logo} alt="" height={36} densities={logo.format === "svg" ? undefined : [1, 2]} />
+            </div>
+            <div class="body">
+              <div class="top">
+                <h3 lang={lang}>
+                  <a class="link" href={url} target="_blank" rel={rel}>
+                    {title}
+                    <span class="sr-only"> (opens in a new tab)</span>
+                  </a>
+                </h3>
+                {current && <span class="badge">Current</span>}
+              </div>
+              <div class="description">
+                <Content />
+              </div>
+              <span class="domain">
+                <span lang={lang}>{domain}</span>
+                <Icon name="ext" />
+              </span>
+            </div>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</Section>
+
+<style>
+  .list {
+    display: grid;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  li {
+    border-top: 1px solid var(--line);
+  }
+
+  /* The whole row is clickable: the title link stretches over it. */
+  .project {
+    position: relative;
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    align-items: center;
+    gap: 16px 24px;
+    padding: 20px 12px;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.15s;
+  }
+
+  .project:hover {
+    background: var(--surface);
+  }
+
+  .project:has(.link:focus-visible) {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  .link {
+    color: var(--heading);
+    text-decoration: none;
+  }
+
+  .link:hover {
+    color: var(--heading);
+  }
+
+  .link:focus-visible {
+    outline: none;
+  }
+
+  .link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+
+  .plate {
+    display: grid;
+    place-items: center;
+    height: 64px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--plate, var(--surface-2));
+  }
+
+  .plate img {
+    width: auto;
+    height: auto;
+    max-height: 36px;
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: var(--radius-btn);
+    background: var(--primary);
+    color: var(--on-primary);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .description {
+    max-width: 62ch;
+    font-size: 0.9688rem;
+    color: var(--fg);
+  }
+
+  .domain {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--primary);
+  }
+
+  .domain svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.2s ease;
+  }
+
+  .project:hover .domain svg {
+    transform: translate(2px, -2px);
+  }
+
+  @media (min-width: 860px) {
+    .project {
+      grid-template-columns: 180px minmax(0, 1fr);
+    }
+  }
+</style>

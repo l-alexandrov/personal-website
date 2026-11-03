@@ -5,6 +5,8 @@ description: Create the Bulgarian or English counterpart of an existing blog pos
 
 # Translate a blog post (en ↔ bg)
 
+> **Status:** the blog is not on master yet. It moves to Astro in part B of the migration (posts in `content/blog/{en,bg}/`, Sveltia CMS config in `public/admin/config.yml`), and this file will be updated then. Until then the schema referred to below, `src/pages/admin/config.ts`, exists only on branch `Feature/Blog-wip` (`git show Feature/Blog-wip:src/pages/admin/config.ts`).
+
 ## Steps
 1. Read the source post and `src/pages/admin/config.ts`. Note the source language from its `language` field.
 2. **File naming:** the pair shares a base slug and differs by suffix: `<slug>-en.md` and `<slug>-bg.md`.

@@ -1,0 +1,76 @@
+---
+// Page shell: head (SEO, theme bootstrap, fonts, icons, analytics), sprite, header and footer.
+// Pages add page-specific head tags, such as structured data, through the "head" slot.
+import { Font } from "astro:assets";
+import Analytics from "../components/Analytics.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import Seo from "../components/Seo.astro";
+import Sprite from "../components/Sprite.astro";
+import ThemeScript from "../components/ThemeScript.astro";
+import "../styles/tokens.css";
+import "../styles/global.css";
+
+interface Props {
+  // Page title; omit on the home page to use the full site title.
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+  lang?: "en" | "bg";
+}
+
+const { title, description, noindex, lang = "en" } = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <Seo title={title} description={description} noindex={noindex} />
+    <ThemeScript />
+    <!-- No preloads: text paints at once in the metric-matched fallback, then swaps. -->
+    <Font cssVariable="--font-geologica" />
+    <Font cssVariable="--font-jetbrains-mono" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+    <Analytics />
+    <slot name="head" />
+  </head>
+  <body>
+    <Sprite />
+    <a class="skip" href="#content">Skip to content</a>
+    <Header />
+    <main id="content" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .skip {
+    position: absolute;
+    left: var(--gutter);
+    top: -100px;
+    z-index: 50;
+    padding: 10px 16px;
+    border-radius: var(--radius-btn);
+    background: var(--primary);
+    color: var(--on-primary);
+    font-weight: 600;
+  }
+
+  .skip:focus {
+    top: calc(12px + env(safe-area-inset-top, 0px));
+  }
+
+  main:focus {
+    outline: none;
+  }
+</style>

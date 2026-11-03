@@ -1,0 +1,88 @@
+---
+// Light/dark switch. ThemeScript sets data-theme before first paint; this script only handles clicks
+// and follows OS changes until the visitor picks a theme.
+import Icon from "./Icon.astro";
+---
+
+<button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to light theme">
+  <Icon name="moon" class="ico moon" />
+  <Icon name="sun" class="ico sun" />
+</button>
+
+<style>
+  .theme-toggle {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-btn);
+    background: transparent;
+    color: var(--heading);
+    cursor: pointer;
+  }
+
+  .theme-toggle:hover {
+    background: var(--surface-2);
+  }
+
+  .sun {
+    display: none;
+  }
+
+  :global(:root[data-theme="light"]) .sun {
+    display: block;
+  }
+
+  :global(:root[data-theme="light"]) .moon {
+    display: none;
+  }
+
+  /* Without JS data-theme is never set and the button could not work, so hide it. */
+  :global(:root:not([data-theme])) .theme-toggle {
+    display: none;
+  }
+</style>
+
+<script>
+  type Theme = "light" | "dark";
+
+  const root = document.documentElement;
+  const lightQuery = matchMedia("(prefers-color-scheme: light)");
+  const buttons = document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]");
+  // Remembers a click even when storage is blocked, so OS changes don't override it.
+  let picked = false;
+
+  function storedTheme(): string | null {
+    try {
+      return localStorage.getItem("theme");
+    } catch {
+      return null;
+    }
+  }
+
+  function apply(theme: Theme) {
+    root.dataset.theme = theme;
+    const label = theme === "dark" ? "Switch to light theme" : "Switch to dark theme";
+    buttons.forEach((button) => button.setAttribute("aria-label", label));
+  }
+
+  apply(root.dataset.theme === "light" ? "light" : "dark");
+
+  buttons.forEach((button) =>
+    button.addEventListener("click", () => {
+      const next: Theme = root.dataset.theme === "dark" ? "light" : "dark";
+      apply(next);
+      picked = true;
+      try {
+        localStorage.setItem("theme", next);
+      } catch {
+        // Storage can be blocked; the choice then lasts for this page only.
+      }
+    }),
+  );
+
+  lightQuery.addEventListener("change", (event) => {
+    if (!picked && !storedTheme()) apply(event.matches ? "light" : "dark");
+  });
+</script>

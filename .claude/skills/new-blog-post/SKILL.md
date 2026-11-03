@@ -5,6 +5,8 @@ description: Scaffold or draft a new blog post in content/blog with frontmatter 
 
 # New blog post
 
+> **Status:** the blog is not on master yet. It moves to Astro in part B of the migration (posts in `content/blog/{en,bg}/`, Sveltia CMS config in `public/admin/config.yml`), and this file will be updated then. Until then the schema referred to below, `src/pages/admin/config.ts`, exists only on branch `Feature/Blog-wip` (`git show Feature/Blog-wip:src/pages/admin/config.ts`).
+
 ## 1. Gather inputs
 Ask only for what is missing:
 - **Topic / outline / notes.** If the user only wants a stub, write frontmatter and a TODO body.
@@ -35,12 +37,12 @@ keywords:
 
 ## 4. Draft the body
 - Follow `references/style-guide.md` for voice.
-- Use markdown only, no MDX components. Posts go through `gatsby-transformer-remark`, not MDX.
+- Use plain Markdown only, no MDX components.
 - Start with a hook paragraph, because the first ~140 characters become the listing excerpt.
 - Use `##` for headings (the title is the page's h1). Put code in fenced blocks with a language tag.
 - Images in the body go in `images/uploads/` and are referenced relatively.
 - Mark anything you made up or are unsure of with `<!-- TODO: verify -->` so the author checks it. Never invent personal anecdotes, client names or numbers.
 
 ## 5. Verify
-- Run `npm run build`. Note that the blog source plugins may not be wired up yet (see "Blog: current state" in CLAUDE.md). If the build ignores the post, say so instead of changing the config without being asked.
+- Run `npm run build`. Until the blog collection exists (see "Blog: current state" in CLAUDE.md), the build ignores posts. Say so instead of adding the collection without being asked.
 - Suggest running the `blog-editor` agent for a review.

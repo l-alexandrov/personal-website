@@ -60,15 +60,15 @@ typings/
 .env.*
 !.env.example
 
-.cache
-**/.cache
-public
+# Astro build output and generated types
+dist
+.astro
 
 .idea
 .vscode
 .DS_Store
 
 # Partytown
-static/~partytown
+public/~partytown
 # Claude Code (personal overrides)
 .claude/settings.local.json

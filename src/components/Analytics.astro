@@ -1,6 +1,7 @@
 ---
 // CookieYes consent banner and GA4, in production builds only. GA runs in a web worker through Partytown
 // (configured in astro.config.ts). Each page is a full load, so GA's default page_view is enough.
+// CookieYes loads async so it doesn't block rendering; its banner is an overlay, so it appears without shifting the page.
 import { site } from "../site";
 
 const { gaMeasurementId: id, cookieYesScript } = site;
@@ -9,7 +10,7 @@ const { gaMeasurementId: id, cookieYesScript } = site;
 {
   import.meta.env.PROD && (
     <>
-      <script is:inline id="cookieyes" type="text/javascript" src={cookieYesScript} />
+      <script is:inline id="cookieyes" type="text/javascript" src={cookieYesScript} async />
       <script is:inline type="text/partytown" src={`https://www.googletagmanager.com/gtag/js?id=${id}`} />
       <script is:inline type="text/partytown" define:vars={{ id }}>
         window.dataLayer = window.dataLayer || [];

@@ -46,6 +46,8 @@ export default defineConfig({
   trailingSlash: "always",
   build: {
     format: "directory",
+    // The CSS is ~11 KB, so inline it rather than block the first paint on extra requests.
+    inlineStylesheets: "always",
   },
   integrations: [
     // Writes sitemap-index.xml and sitemap-0.xml, the same files the Gatsby site had.

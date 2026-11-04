@@ -1,38 +1,70 @@
 ---
-// Title, description, canonical URL, Open Graph and Twitter tags for every page.
+// Title, description, canonical URL, hreflang links, Open Graph and Twitter tags for every page.
+import { defaultLocale, ui, type Locale } from "../blog";
 import { site, siteDescription } from "../site";
 
-interface Props {
+export interface SeoProps {
   // Page title; omit on the home page to use the full site title.
   title?: string;
   description?: string;
   noindex?: boolean;
+  lang?: Locale;
+  // Share image; defaults to the site image.
+  image?: { src: string; width: number; height: number; alt: string };
+  // Set on blog posts: makes og:type "article".
+  article?: { published: Date; modified?: Date; tags: string[] };
+  // The same page in other languages.
+  alternates?: { lang: Locale; href: string }[];
 }
 
-const { title, noindex = false } = Astro.props;
+type Props = SeoProps;
+
+const { title, noindex = false, lang = defaultLocale, image = site.image, article, alternates = [] } = Astro.props;
 const description = Astro.props.description ?? (await siteDescription());
 const fullTitle = title ? `${title} | ${site.name}` : site.title;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const image = new URL(site.image.src, Astro.site).href;
+const imageUrl = new URL(image.src, Astro.site).href;
+
+// hreflang links list every version, this one included; x-default points at the English one.
+const versions = alternates.length > 0 ? [{ lang, href: canonical }, ...alternates] : [];
+const fallback = versions.find((version) => version.lang === defaultLocale);
+const absolute = (href: string) => new URL(href, Astro.site).href;
 ---
 
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+{
+  !noindex &&
+    versions.map((version) => <link rel="alternate" hreflang={version.lang} href={absolute(version.href)} />)
+}
+{!noindex && fallback && <link rel="alternate" hreflang="x-default" href={absolute(fallback.href)} />}
 
-<meta property="og:type" content="website" />
+<meta property="og:type" content={article ? "article" : "website"} />
 <meta property="og:site_name" content={site.name} />
+<meta property="og:locale" content={ui[lang].ogLocale} />
+{alternates.map((alternate) => <meta property="og:locale:alternate" content={ui[alternate.lang].ogLocale} />)}
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
-<meta property="og:image" content={image} />
-<meta property="og:image:width" content={String(site.image.width)} />
-<meta property="og:image:height" content={String(site.image.height)} />
-<meta property="og:image:alt" content={site.image.alt} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:image:width" content={String(image.width)} />
+<meta property="og:image:height" content={String(image.height)} />
+<meta property="og:image:alt" content={image.alt} />
+{
+  article && (
+    <>
+      <meta property="article:published_time" content={article.published.toISOString()} />
+      {article.modified && <meta property="article:modified_time" content={article.modified.toISOString()} />}
+      <meta property="article:author" content={Astro.site?.href} />
+      {article.tags.map((tag) => <meta property="article:tag" content={tag} />)}
+    </>
+  )
+}
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content={site.twitter} />
 <meta name="twitter:title" content={fullTitle} />
 <meta name="twitter:description" content={description} />
-<meta name="twitter:image" content={image} />
-<meta name="twitter:image:alt" content={site.image.alt} />
+<meta name="twitter:image" content={imageUrl} />
+<meta name="twitter:image:alt" content={image.alt} />

@@ -21,7 +21,7 @@ title: <string>
 description: <one or two sentences; meta description, post list and RSS>
 date: YYYY-MM-DDTHH:mm:ss          # local time (Europe/Sofia)
 updated: YYYY-MM-DDTHH:mm:ss       # optional, only after a real revision
-image: ../_images/<file>           # optional
+image: "@blog-images/<file>"     # optional; quoted, YAML can't start a value with @
 imageAlt: <what the image shows>   # required when image is set
 tags:
   - <tag>
@@ -40,7 +40,7 @@ draft: true                        # leave true until the author approves
 - Plain Markdown only, no MDX components.
 - Start with a hook paragraph. `description` is separate, so the first paragraph doesn't have to repeat it.
 - Use `##` for headings (the title is the page's h1). Put code in fenced blocks with a language tag.
-- Images in the body go in `src/content/blog/_images/` and are referenced as `../_images/<file>`, with alt text.
+- Images in the body go in `src/content/blog/_images/` and are referenced as `@blog-images/<file>`, with alt text.
 - Mark anything you made up or are unsure of with `<!-- TODO: verify -->` so the author checks it. Never invent personal anecdotes, client names or numbers.
 
 ## 5. Verify

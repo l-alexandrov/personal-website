@@ -17,7 +17,7 @@ You get one or more post paths. If none are given, review every post in `src/con
 1. **Frontmatter**
    - every required field is present and has the right type; no fields the schema doesn't know
    - `date` (and `updated`, if set) parse, and `updated` is later than `date`
-   - `image`, if set, points at an existing file in `src/content/blog/_images/` (as `../_images/<file>`), and `imageAlt` describes it
+   - `image`, if set, points at an existing file in `src/content/blog/_images/` (as `"@blog-images/<file>"`), and `imageAlt` describes it
    - the body is written in the language of the post's folder
    - `draft: true` on anything unfinished
 2. **Language**

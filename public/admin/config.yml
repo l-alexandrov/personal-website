@@ -16,10 +16,10 @@ publish_mode: editorial_workflow
 site_url: https://lyuboo.com
 display_url: https://lyuboo.com
 
-# Images sit next to the posts so Astro can optimise them. The blog collection overrides public_folder
-# so posts reference them relatively, as ../_images/<file>.
+# Images sit next to the posts so Astro can optimise them. Posts reference them through the
+# @blog-images alias from tsconfig.json, which works for the cover and for images in the body.
 media_folder: src/content/blog/_images
-public_folder: /src/content/blog/_images
+public_folder: "@blog-images"
 
 output:
   omit_empty_optional_fields: true
@@ -46,9 +46,6 @@ collections:
     slug: "{{slug}}"
     summary: "{{title}}"
     sortable_fields: [date, title]
-    # Relative to the collection folder; the post files are one level below it, in en/ and bg/.
-    media_folder: _images
-    public_folder: ../_images
     fields:
       - name: title
         label: Title

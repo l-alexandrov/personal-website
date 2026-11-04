@@ -71,7 +71,7 @@ const blog = defineCollection({
         description: z.string(),
         date: z.coerce.date(),
         updated: z.coerce.date().optional(),
-        // Cover image from src/content/blog/_images, written as ../_images/<file>.
+        // Cover image from src/content/blog/_images, written as "@blog-images/<file>" (alias in tsconfig.json).
         image: image().optional(),
         imageAlt: z.string().optional(),
         tags: z.array(z.string()).default([]),

@@ -108,13 +108,16 @@ export function tagPath(locale: Locale, tag: string): string {
   return `${blogPath(locale)}tags/${tagSlug(tag)}/`;
 }
 
-// The tags used in one language, most used first. Tags that differ only in case or spacing are merged.
+// The tags used in one language, most used first. Tags that differ only in case or spacing are merged,
+// also within one post, so a post is listed once per tag. Tags with no letters or digits are skipped.
 export async function getTags(locale: Locale): Promise<{ slug: string; name: string; posts: Post[] }[]> {
   const tags = new Map<string, { slug: string; name: string; posts: Post[] }>();
   for (const post of await getPosts(locale)) {
+    const seen = new Set<string>();
     for (const name of post.data.tags) {
       const slug = tagSlug(name);
-      if (!slug) continue;
+      if (!slug || seen.has(slug)) continue;
+      seen.add(slug);
       const tag = tags.get(slug) ?? { slug, name, posts: [] };
       tag.posts.push(post);
       tags.set(slug, tag);

@@ -9,6 +9,7 @@ interface Props {
 }
 
 const { lang, languages } = Astro.props;
+// The header stays English on Bulgarian pages too, so it carries its own lang="en".
 
 // The blog link appears once there is a published post, and opens the English list if it exists.
 const [blogLocale] = await localesWithPosts();
@@ -26,7 +27,7 @@ const inBlog = locales.some((locale) => current.startsWith(blogPath(locale)));
 const ariaCurrent = (href: string) => (href === current ? "page" : href === blogHref && inBlog ? "true" : undefined);
 ---
 
-<header class="site-header">
+<header class="site-header" lang="en">
   <div class="wrap">
     <nav class="site-nav" aria-label="Main">
       <ul>

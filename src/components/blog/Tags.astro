@@ -1,7 +1,7 @@
 ---
 // A post's tags. Plain labels while tag pages are off; links to each tag's post list once
-// `tagPages` in src/blog.ts is on.
-import { tagPages, tagPath, ui, type Locale } from "../../blog";
+// `tagPages` in src/blog.ts is on. A tag with no letters or digits has no page, so it stays a label.
+import { tagPages, tagPath, tagSlug, ui, type Locale } from "../../blog";
 
 interface Props {
   tags: string[];
@@ -15,7 +15,7 @@ const { tags, locale } = Astro.props;
   tags.length > 0 && (
     <ul class="tags" aria-label={ui[locale].tags}>
       {tags.map((tag) => (
-        <li>{tagPages ? <a href={tagPath(locale, tag)}>{tag}</a> : tag}</li>
+        <li>{tagPages && tagSlug(tag) ? <a href={tagPath(locale, tag)}>{tag}</a> : tag}</li>
       ))}
     </ul>
   )

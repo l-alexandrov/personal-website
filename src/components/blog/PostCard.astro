@@ -20,7 +20,7 @@ const t = ui[locale];
 const translations = await getTranslations(post);
 ---
 
-<article class:list={["post-card", { lead }]}>
+<article class:list={["post-card", { lead }]} lang={locale}>
   <PostCover
     slug={postSlug(post)}
     image={image}

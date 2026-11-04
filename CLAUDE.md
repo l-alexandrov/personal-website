@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Personal website of Lyuboslav Alexandrov (https://lyuboo.com): a one-page portfolio plus a blog that is still being built. It is statically generated with Astro and hosted on GitHub Pages.
+Personal website of Lyuboslav Alexandrov (https://lyuboo.com): a one-page portfolio plus a bilingual (English/Bulgarian) blog. It is statically generated with Astro and hosted on GitHub Pages.
 
 ## Stack
 - Astro 7, TypeScript (strict), static output, no UI framework
@@ -8,7 +8,8 @@ Personal website of Lyuboslav Alexandrov (https://lyuboo.com): a one-page portfo
 - Content: Astro content collections (Markdown + zod schemas)
 - Fonts: Geologica and JetBrains Mono, self-hosted from `@fontsource-variable/*` through Astro's fonts API (Latin and Cyrillic)
 - Analytics: GA4 through `@astrojs/partytown`, plus the CookieYes banner, both in production builds only (`src/components/Analytics.astro`)
-- Sitemap: `@astrojs/sitemap`
+- Sitemap: `@astrojs/sitemap`; blog feeds: `@astrojs/rss`
+- Blog CMS: Sveltia CMS at `/admin/` (`public/admin/`), loaded from unpkg at a pinned version
 
 ## Commands
 Use **npm**, not yarn. Use Node 24 (`nvm use`); Astro 7 does not run on older versions.
@@ -35,14 +36,18 @@ There are no tests and no linter. **`npm run build` is the verification step**: 
 - `src/assets/`: images processed by `astro:assets` (photo, project logos).
 - `src/layouts/BaseLayout.astro`: page shell (head, theme script, fonts, header, footer). Pages add extra head tags through `<Fragment slot="head">` or a component with `slot="head"`.
 - `src/components/`: `Seo`, `Analytics`, `Header`, `Footer`, `ThemeToggle`/`ThemeScript`, `Sprite` + `Icon` (inline SVG sprite), `Section`; home sections in `components/home/`.
-- `src/pages/`: `index.astro`, `404.astro`, and the `manifest.webmanifest` and `robots.txt` endpoints.
-- `public/`: files copied verbatim (favicons, `ogImage.png`).
+- `src/pages/`: `index.astro`, `404.astro`, the `manifest.webmanifest` and `robots.txt` endpoints, and the blog under `[...locale]/blog/`.
+- `src/blog.ts`: blog languages, URLs, `getPosts()`, translations, date formatting and the blog's interface text in both languages.
+- `public/`: files copied verbatim (favicons, `ogImage.png`, `admin/`).
 
-## Blog: current state
-The blog is not on master yet. It moves to Astro in part B of the migration:
-- Posts in `content/blog/{en,bg}/*.md`, English at `/blog/<slug>/` and Bulgarian at `/bg/blog/<slug>/`, linked by a `translationKey` field.
-- Sveltia CMS at `/admin/` (`public/admin/`), GitHub backend with the editorial workflow.
-- The earlier Gatsby/Static CMS work is kept on branch `Feature/Blog-wip`, including the original frontmatter schema in `src/pages/admin/config.ts`.
+## Blog
+- Posts: `src/content/blog/<lang>/<slug>.md`, with `<lang>` `en` or `bg`. A translation is the file with the same name in the other folder; that is what links the two (language switch, hreflang).
+- URLs: English at `/blog/` and `/blog/<slug>/`, Bulgarian at `/bg/blog/` and `/bg/blog/<slug>/`. Both come from the `[...locale]` routes, whose param is empty for English. Feeds: `/blog/rss.xml`, `/bg/blog/rss.xml`.
+- Frontmatter: `title`, `description`, `date`, optional `updated`, optional `image` + `imageAlt` (alt is required with an image), `tags`, `draft`. The schema is in `src/content.config.ts`, and `public/admin/config.yml` must describe the same fields.
+- Images: `src/content/blog/_images/`, referenced from a post as `../_images/<file>` so `astro:assets` optimises them. The cover also becomes the post's share image.
+- `draft: true` posts appear only in `npm run dev`. A language's post list and feed are built only once it has a published post, and the header's Blog link appears with the first one.
+- CMS: `/admin/` on the live site, `/admin/index.html` with `npm run dev`. Sign-in uses a GitHub personal access token (no OAuth app is set up). `publish_mode: editorial_workflow`: each post is a pull request to `master` until it is published. To update Sveltia, bump the version in both `public/admin/index.html` and the schema URL at the top of `config.yml`.
+- The Gatsby-era blog work is kept on branch `Feature/Blog-wip` for reference.
 
 ## Conventions
 - Use the tokens from `tokens.css` (`--primary`, `--fg`, `--heading`, `--muted`, `--surface`, `--line`, `--s-*` shape colours), not hard-coded colours. Check both light and dark themes, at phone and desktop widths.

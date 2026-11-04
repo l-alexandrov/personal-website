@@ -16,7 +16,7 @@ Welcome to the repository for my personal website! This site is statically gener
 - **SEO Optimized** 🔍
 - **Responsive Design** 📱💻🖥️
 - **Easy to Customize** ✨
-- **Blog Support** 📝
+- **Blog** in English and Bulgarian, with RSS feeds and [Sveltia CMS](https://github.com/sveltia/sveltia-cms) at `/admin/` 📝
 
 ## 📚 Getting Started
 
@@ -51,6 +51,10 @@ Welcome to the repository for my personal website! This site is statically gener
    ```
 
    This type-checks the project and writes the site to `dist/`. Preview it with `npm run preview`. Pushing to `master` deploys it to GitHub Pages.
+
+6. **Writing posts**:
+
+   Add Markdown files to `src/content/blog/en/` or `src/content/blog/bg/`, or use the CMS at `/admin/` (sign in with a GitHub personal access token). Posts with `draft: true` show only in the development server.
 
 ## 🤝 Contributing
 

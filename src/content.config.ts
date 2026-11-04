@@ -59,4 +59,29 @@ const projects = defineCollection({
     }),
 });
 
-export const collections = { intro, about, contact, projects };
+// Blog posts: src/content/blog/<lang>/<slug>.md. A translation has the same file name in the other
+// language's folder. Sveltia CMS (public/admin/config.yml) writes the same fields; keep the two in sync.
+const blog = defineCollection({
+  loader: glob({ pattern: "{en,bg}/*.md", base: "./src/content/blog" }),
+  schema: ({ image }) =>
+    z
+      .object({
+        title: z.string(),
+        // Meta description and the summary in the post list and RSS feed.
+        description: z.string(),
+        date: z.coerce.date(),
+        updated: z.coerce.date().optional(),
+        // Cover image from src/content/blog/_images, written as ../_images/<file>.
+        image: image().optional(),
+        imageAlt: z.string().optional(),
+        tags: z.array(z.string()).default([]),
+        // Drafts show in `npm run dev` only.
+        draft: z.boolean().default(false),
+      })
+      .refine((post) => !post.image || post.imageAlt, {
+        message: "imageAlt is required when image is set",
+        path: ["imageAlt"],
+      }),
+});
+
+export const collections = { intro, about, contact, projects, blog };

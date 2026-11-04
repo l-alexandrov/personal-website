@@ -1,0 +1,18 @@
+---
+// "From the blog" on the home page: the two newest posts, in English when it has posts.
+// Hidden until a language has a published post.
+import { blogPath, getPosts, localesWithPosts } from "../../blog";
+import PostList from "../blog/PostList.astro";
+import Section from "../Section.astro";
+
+const [locale] = await localesWithPosts();
+const posts = locale ? (await getPosts(locale)).slice(0, 2) : [];
+---
+
+{
+  locale && (
+    <Section id="writing" title="From the blog" glyph="cross" color="pink" note="All posts →" noteHref={blogPath(locale)}>
+      <PostList posts={posts} heading="h3" />
+    </Section>
+  )
+}

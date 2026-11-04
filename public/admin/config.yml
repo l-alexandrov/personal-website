@@ -1,0 +1,94 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms@0.258.1/schema/sveltia-cms.json
+#
+# Sveltia CMS for the blog, at https://lyuboo.com/admin/ (with `npm run dev`: /admin/index.html).
+# Sign in with a GitHub personal access token (Contents and Pull requests: read and write).
+# For one-click sign-in, deploy sveltia-cms-auth and set backend.base_url to its URL.
+# The fields mirror the blog schema in src/content.config.ts; keep the two in sync.
+
+backend:
+  name: github
+  repo: l-alexandrov/personal-website
+  branch: master
+
+# Each post is a pull request until it is published; merging it deploys the site.
+publish_mode: editorial_workflow
+
+site_url: https://lyuboo.com
+display_url: https://lyuboo.com
+
+# Images sit next to the posts so Astro can optimise them. Posts reference them through the
+# @blog-images alias from tsconfig.json, which works for the cover and for images in the body.
+media_folder: src/content/blog/_images
+public_folder: "@blog-images"
+
+output:
+  omit_empty_optional_fields: true
+
+# One folder per language. A translation is the same file name in the other folder.
+i18n:
+  structure: multiple_folders
+  locales: [en, bg]
+  default_locale: en
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  - name: blog
+    label: Blog
+    label_singular: Post
+    folder: src/content/blog
+    extension: md
+    format: frontmatter
+    create: true
+    i18n: true
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    sortable_fields: [date, title]
+    fields:
+      - name: title
+        label: Title
+        widget: string
+        i18n: true
+      - name: description
+        label: Description
+        widget: text
+        hint: One or two sentences. Used in the post list, the RSS feed and search results.
+        i18n: true
+      - name: date
+        label: Publish date
+        widget: datetime
+        i18n: duplicate
+      - name: updated
+        label: Updated
+        widget: datetime
+        required: false
+        i18n: duplicate
+      - name: image
+        label: Cover image
+        widget: image
+        required: false
+        i18n: duplicate
+      - name: imageAlt
+        label: Cover image description
+        widget: string
+        required: false
+        hint: Required when there is a cover image. Describe what it shows.
+        i18n: true
+      - name: tags
+        label: Tags
+        widget: list
+        required: false
+        i18n: true
+      - name: draft
+        label: Draft
+        widget: boolean
+        default: false
+        required: false
+        hint: Drafts are not published, even after merging.
+        i18n: duplicate
+      - name: body
+        label: Body
+        widget: markdown
+        i18n: true

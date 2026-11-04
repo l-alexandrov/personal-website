@@ -1,6 +1,6 @@
 # Writing style guide
 
-This guide is drawn from the existing site copy (`sections/intro.mdx`, `sections/about.mdx`). It's a starting point; refine it as posts are written.
+This guide is drawn from the existing site copy (`src/content/home/intro.md`, `src/content/home/about.md`). It's a starting point; refine it as posts are written.
 
 ## Voice
 - First person, conversational and direct. ("Hey there! I'm a problem-solver at heart…")

@@ -9,9 +9,11 @@ interface Props {
   // A shape colour token from tokens.css, without the --s- prefix.
   color: "red" | "blue" | "orange" | "yellow" | "pink" | "purple" | "green";
   note?: string;
+  // Turns the note into a link.
+  noteHref?: string;
 }
 
-const { id, title, glyph, color, note } = Astro.props;
+const { id, title, glyph, color, note, noteHref } = Astro.props;
 ---
 
 <section class="section" id={id} aria-labelledby={`${id}-title`}>
@@ -19,7 +21,7 @@ const { id, title, glyph, color, note } = Astro.props;
     <div class="section-head">
       <Icon name={glyph} class="glyph" style={`--c: var(--s-${color})`} />
       <h2 id={`${id}-title`}>{title}</h2>
-      {note && <span class="note">{note}</span>}
+      {note && (noteHref ? <a class="note" href={noteHref}>{note}</a> : <span class="note">{note}</span>)}
     </div>
     <slot />
   </div>

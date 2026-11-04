@@ -1,0 +1,97 @@
+---
+// A post's cover: its image when it has one, otherwise a composition of the site's shapes
+// drawn from the slug, so the same post always gets the same picture. Both render at build time.
+import type { HTMLAttributes } from "astro/types";
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import type { IconName } from "../Icon.astro";
+
+interface Props extends HTMLAttributes<"div"> {
+  slug: string;
+  image?: ImageMetadata;
+  // Empty on cards, where the title next to the cover says the same thing.
+  alt?: string;
+  sizes: string;
+  eager?: boolean;
+}
+
+const { slug, image, alt = "", sizes, eager = false, class: className, ...rest } = Astro.props;
+
+const kinds: IconName[] = ["triangle", "hexa", "circle", "box", "cross", "updown"];
+const colors = ["orange", "red", "green", "yellow", "pink", "bright", "blue", "purple"];
+
+// FNV-1a hash of the slug seeds a small linear congruential generator.
+let seed = 2166136261;
+for (const char of slug) seed = Math.imul(seed ^ char.charCodeAt(0), 16777619) >>> 0;
+const random = () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296;
+
+// Three large shapes, then eight small ones, on a 400×200 canvas.
+const shapes = Array.from({ length: 11 }, (_, i) => {
+  const size = i < 3 ? 46 + random() * 44 : 10 + random() * 22;
+  const x = 20 + random() * 360;
+  const y = 16 + random() * 168;
+  const rotate = Math.round(random() * 360);
+  return {
+    kind: kinds[Math.floor(random() * kinds.length)],
+    color: colors[Math.floor(random() * colors.length)],
+    x: (x - size / 2).toFixed(1),
+    y: (y - size / 2).toFixed(1),
+    size: size.toFixed(1),
+    transform: `rotate(${rotate} ${x.toFixed(1)} ${y.toFixed(1)})`,
+  };
+});
+---
+
+<div class:list={["cover", className]} {...rest}>
+  {
+    image ? (
+      <Image
+        src={image}
+        alt={alt}
+        widths={[480, 720, 960, 1440, 1920].filter((width) => width <= image.width)}
+        sizes={sizes}
+        loading={eager ? "eager" : "lazy"}
+        fetchpriority={eager ? "high" : undefined}
+      />
+    ) : (
+      <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+        {shapes.map((shape) => (
+          <use
+            href={`#i-${shape.kind}`}
+            x={shape.x}
+            y={shape.y}
+            width={shape.size}
+            height={shape.size}
+            transform={shape.transform}
+            style={`color: var(--s-${shape.color})`}
+          />
+        ))}
+      </svg>
+    )
+  }
+</div>
+
+<style>
+  /* Dot grid behind the shapes; the parent sets the aspect ratio with --ratio. */
+  .cover {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: var(--ratio, 2 / 1);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface);
+    background-image: radial-gradient(var(--line) 1px, transparent 1.4px);
+    background-size: 18px 18px;
+    --sw: 2;
+  }
+
+  .cover :is(img, svg) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .cover img {
+    object-fit: cover;
+  }
+</style>

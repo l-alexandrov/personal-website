@@ -1,0 +1,175 @@
+---
+// A post in a list: cover, date and reading time, title, summary, tags and its other languages.
+// The title link covers the whole card; the tag and language links sit above it.
+import { formatDate, getTranslations, postLocale, postPath, postSlug, readingTime, ui, type Post } from "../../blog";
+import PostCover from "./PostCover.astro";
+import Tags from "./Tags.astro";
+
+interface Props {
+  post: Post;
+  // h2 on the blog pages, h3 under a section heading on the home page.
+  heading?: "h2" | "h3";
+  // The newest post on the blog index: full width, cover beside the text.
+  lead?: boolean;
+}
+
+const { post, heading: Heading = "h2", lead = false } = Astro.props;
+const { title, description, date, image, tags, draft } = post.data;
+const locale = postLocale(post);
+const t = ui[locale];
+const translations = await getTranslations(post);
+---
+
+<article class:list={["post-card", { lead }]} lang={locale}>
+  <PostCover
+    slug={postSlug(post)}
+    image={image}
+    sizes={lead
+      ? "(min-width: 760px) min(700px, 58vw), calc(100vw - 54px)"
+      : "(min-width: 760px) min(590px, 46vw), calc(100vw - 54px)"}
+    eager={lead}
+  />
+  <p class="meta">
+    <time datetime={date.toISOString()}>{formatDate(date, locale)}</time>
+    <span>{t.minRead(readingTime(post))}</span>
+    {draft && <span class="draft">Draft</span>}
+  </p>
+  <Heading class="title"><a class="link" href={postPath(post)}>{title}</a></Heading>
+  <p class="excerpt">{description}</p>
+  <Tags tags={tags} locale={locale} />
+  <p class="alt">
+    {
+      translations.length > 0 ? (
+        <>
+          {t.alsoIn}{" "}
+          {translations.map((translation, i) => (
+            <>
+              {i > 0 && ", "}
+              <a href={postPath(translation)} hreflang={postLocale(translation)} lang={postLocale(translation)}>
+                {ui[postLocale(translation)].languageName}
+              </a>
+            </>
+          ))}
+        </>
+      ) : (
+        t.onlyIn
+      )
+    }
+  </p>
+</article>
+
+<style>
+  .post-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+    padding: 10px 10px 22px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    transition: border-color 0.15s;
+  }
+
+  .post-card:hover {
+    border-color: var(--primary);
+  }
+
+  .post-card:has(.link:focus-visible) {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+  }
+
+  .post-card > :not(.cover) {
+    padding-inline: 10px;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .draft {
+    padding: 2px 8px;
+    border-radius: var(--radius-btn);
+    background: var(--surface-2);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .link {
+    color: var(--heading);
+    text-decoration: none;
+  }
+
+  .link:hover {
+    color: var(--primary);
+  }
+
+  .link:focus-visible {
+    outline: none;
+  }
+
+  .link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+
+  .excerpt {
+    color: var(--fg);
+  }
+
+  .alt {
+    margin-top: auto;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .alt a {
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (min-width: 760px) {
+    .lead {
+      display: grid;
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      align-content: center;
+      column-gap: 32px;
+      row-gap: 12px;
+    }
+
+    .lead > :global(.cover) {
+      grid-column: 1;
+      grid-row: 1 / span 6;
+      align-self: stretch;
+      --ratio: 16 / 10;
+    }
+
+    .lead > :not(.cover) {
+      grid-column: 2;
+      padding-inline: 0 12px;
+    }
+
+    .lead .title {
+      font-size: 1.875rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+  }
+</style>

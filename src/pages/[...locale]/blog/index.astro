@@ -1,0 +1,29 @@
+---
+// The post list, at /blog/ for English and /bg/blog/ for Bulgarian.
+import BlogIndex from "../../../components/blog/BlogIndex.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { blogPath, getPosts, languageLinks, localeParam, localesWithPosts, ui, type Locale } from "../../../blog";
+
+export async function getStaticPaths() {
+  const locales = await localesWithPosts();
+  return locales.map((locale) => ({ params: { locale: localeParam(locale) }, props: { locale, locales } }));
+}
+
+interface Props {
+  locale: Locale;
+  // All languages that have posts.
+  locales: Locale[];
+}
+
+const { locale, locales } = Astro.props;
+const t = ui[locale];
+const posts = await getPosts(locale);
+const others = locales.filter((other) => other !== locale);
+const alternates = others.map((other) => ({ lang: other, href: blogPath(other) }));
+const languages = await languageLinks(locale, blogPath(locale));
+---
+
+<BaseLayout title={t.blog} description={t.description} lang={locale} alternates={alternates} languages={languages}>
+  <link slot="head" rel="alternate" type="application/rss+xml" title={`${t.blog} | ${t.rss}`} href={`${blogPath(locale)}rss.xml`} />
+  <BlogIndex locale={locale} posts={posts} others={others} />
+</BaseLayout>

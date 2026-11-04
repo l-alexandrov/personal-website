@@ -1,29 +1,24 @@
 ---
 name: translate-post
-description: Create the Bulgarian or English counterpart of an existing blog post in content/blog. Use when the user asks to translate a post, or to make a bg/en version of one.
+description: Create the Bulgarian or English counterpart of an existing blog post in src/content/blog. Use when the user asks to translate a post, or to make a bg/en version of one.
 ---
 
 # Translate a blog post (en ↔ bg)
 
-> **Status:** the blog is not on master yet. It moves to Astro in part B of the migration (posts in `content/blog/{en,bg}/`, Sveltia CMS config in `public/admin/config.yml`), and this file will be updated then. Until then the schema referred to below, `src/pages/admin/config.ts`, exists only on branch `Feature/Blog-wip` (`git show Feature/Blog-wip:src/pages/admin/config.ts`).
+## How translations are linked
+A translation is the file with the **same name** in the other language's folder: `src/content/blog/en/<slug>.md` ↔ `src/content/blog/bg/<slug>.md`. The site links them by that name (the "Read in English" / "Прочетете на български" switch and the hreflang tags), and Sveltia CMS stores them the same way. There is no separate linking field.
 
 ## Steps
-1. Read the source post and `src/pages/admin/config.ts`. Note the source language from its `language` field.
-2. **File naming:** the pair shares a base slug and differs by suffix: `<slug>-en.md` and `<slug>-bg.md`.
-   - If the source has no suffix (e.g. `my-first-post.md`), create only `<slug>-<target>.md`. Ask before renaming the source, because renaming changes its public URL.
-   - Use an ASCII slug for both files. Don't use a Cyrillic file name.
+1. Read the source post and the `blog` schema in `src/content.config.ts`. The source language is the folder it is in.
+2. Create the target file with the same file name in the other folder. If it already exists, stop and ask; don't overwrite a translation.
 3. **Frontmatter:**
-   - `language`: the target language
-   - `title`: translated, natural rather than literal
-   - `keywords`: translated into what people actually search for in that language. English tech terms are often what Bulgarian readers search for.
-   - `date`, `image`, `layout`: copied unchanged
+   - `title`, `description`, `imageAlt`: translated, natural rather than literal
+   - `tags`: what people actually search for in that language. English tech terms are often what Bulgarian readers search for.
+   - `date`, `updated`, `image`, `draft`: copied unchanged (set `draft: true` if the author hasn't reviewed the translation yet)
 4. **Body:**
    - Translate meaning and tone, not word for word. Follow `.claude/skills/new-blog-post/references/style-guide.md`.
    - Do **not** translate code blocks, inline code, commands, URLs, product names or proper nouns.
    - Comments inside code blocks may be translated if they are explanatory.
-   - Keep the heading structure, links and images the same as the source.
+   - Keep the heading structure, links and images the same as the source. Translate image alt text.
    - Mark idioms or claims that may not carry over with `<!-- TODO: check translation -->`.
-5. Report what was created, plus any wording you were unsure of.
-
-## Known limitation
-The CMS schema has no field that links translations to each other, so the pair is matched only by file name. To show language switchers on post pages, a `translation_key` (or similar) field would need to be added to `src/pages/admin/config.ts` and the blog templates. Suggest this, but don't make the change unless asked.
+5. Run `npm run build`, then report what was created, plus any wording you were unsure of.

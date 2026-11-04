@@ -1,0 +1,198 @@
+---
+// The post list, at /blog/ for English and /bg/blog/ for Bulgarian.
+import Icon from "../../../components/Icon.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { blogPath, formatDate, getPosts, localeParam, localesWithPosts, postPath, ui, type Locale } from "../../../blog";
+
+export async function getStaticPaths() {
+  const locales = await localesWithPosts();
+  return locales.map((locale) => ({ params: { locale: localeParam(locale) }, props: { locale, locales } }));
+}
+
+interface Props {
+  locale: Locale;
+  // All languages that have posts.
+  locales: Locale[];
+}
+
+const { locale, locales } = Astro.props;
+const t = ui[locale];
+const posts = await getPosts(locale);
+const others = locales.filter((other) => other !== locale);
+const alternates = others.map((other) => ({ lang: other, href: blogPath(other) }));
+---
+
+<BaseLayout title={t.blog} description={t.description} lang={locale} alternates={alternates}>
+  <link slot="head" rel="alternate" type="application/rss+xml" title={`${t.blog} | ${t.rss}`} href={`${blogPath(locale)}rss.xml`} />
+  <section class="wrap stack blog" aria-labelledby="blog-title">
+    <header class="stack head">
+      <div class="title-row">
+        <Icon name="box" class="glyph" />
+        <h1 id="blog-title">{t.blog}</h1>
+      </div>
+      <p class="lede">{t.description}</p>
+      <ul class="links">
+        <li><a href={`${blogPath(locale)}rss.xml`}>{t.rss}</a></li>
+        {
+          others.map((other) => (
+            <li>
+              <a href={blogPath(other)} hreflang={other} lang={other}>
+                {ui[other].postsIn}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </header>
+
+    <ol class="posts">
+      {
+        posts.map((post) => (
+          <li>
+            <article class="post">
+              <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, locale)}</time>
+              <div class="body">
+                <h2>
+                  <a class="link" href={postPath(post)}>
+                    {post.data.title}
+                  </a>
+                </h2>
+                <p>{post.data.description}</p>
+                {post.data.draft && <span class="draft">Draft</span>}
+              </div>
+            </article>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</BaseLayout>
+
+<style>
+  .blog {
+    --gap: 40px;
+    padding-block: clamp(48px, 8vw, 96px);
+  }
+
+  .head {
+    --gap: 14px;
+    max-width: 720px;
+  }
+
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .glyph {
+    width: 28px;
+    height: 28px;
+    color: var(--s-blue);
+    --sw: 3;
+  }
+
+  h1 {
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+  }
+
+  .lede {
+    font-size: clamp(1.0625rem, 1.6vw, 1.1875rem);
+    color: var(--muted);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+
+  .posts {
+    display: grid;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* The title link covers the whole row; the row shows the focus ring. */
+  .post {
+    position: relative;
+    display: grid;
+    gap: 6px 32px;
+    padding: 24px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .post:has(.link:focus-visible) {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+
+  .post:hover h2 a {
+    color: var(--primary);
+  }
+
+  time {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--muted);
+    padding-top: 4px;
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  h2 {
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  h2 a {
+    color: var(--heading);
+    text-decoration: none;
+  }
+
+  .link:focus-visible {
+    outline: none;
+  }
+
+  .link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  .body p {
+    color: var(--muted);
+  }
+
+  .draft {
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  @media (min-width: 860px) {
+    .post {
+      grid-template-columns: 180px minmax(0, 1fr);
+    }
+  }
+</style>

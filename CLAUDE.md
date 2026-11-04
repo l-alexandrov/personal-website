@@ -37,16 +37,19 @@ There are no tests and no linter. **`npm run build` is the verification step**: 
 - `src/layouts/BaseLayout.astro`: page shell (head, theme script, fonts, header, footer). Pages add extra head tags through `<Fragment slot="head">` or a component with `slot="head"`.
 - `src/components/`: `Seo`, `Analytics`, `Header`, `Footer`, `ThemeToggle`/`ThemeScript`, `Sprite` + `Icon` (inline SVG sprite), `Section`; home sections in `components/home/`.
 - `src/pages/`: `index.astro`, `404.astro`, the `manifest.webmanifest` and `robots.txt` endpoints, and the blog under `[...locale]/blog/`.
-- `src/blog.ts`: blog languages, URLs, `getPosts()`, translations, date formatting and the blog's interface text in both languages.
+- `src/blog.ts`: blog languages, URLs, `getPosts()`, translations, tags, reading time, date formatting and the blog's interface text in both languages.
+- `src/components/blog/`: post card, list, cover, tags, breadcrumbs and the list page body shared by the index and tag pages.
 - `public/`: files copied verbatim (favicons, `ogImage.png`, `admin/`).
 
 ## Blog
 - Posts: `src/content/blog/<lang>/<slug>.md`, with `<lang>` `en` or `bg`. A translation is the file with the same name in the other folder; that is what links the two (language switch, hreflang).
 - URLs: English at `/blog/` and `/blog/<slug>/`, Bulgarian at `/bg/blog/` and `/bg/blog/<slug>/`. Both come from the `[...locale]` routes, whose param is empty for English. Feeds: `/blog/rss.xml`, `/bg/blog/rss.xml`.
 - Frontmatter: `title`, `description`, `date`, optional `updated`, optional `image` + `imageAlt` (alt is required with an image), `tags`, `draft`. The schema is in `src/content.config.ts`, and `public/admin/config.yml` must describe the same fields.
-- Images: `src/content/blog/_images/`, referenced from a post as `@blog-images/<file>` (an alias in `tsconfig.json`; quote it in frontmatter) so `astro:assets` optimises them. Don't use `/src/...` paths: Astro leaves those unprocessed in the body. The cover also becomes the post's share image.
-- `draft: true` posts appear only in `npm run dev`. A language's post list and feed are built only once it has a published post, and the header's Blog link appears with the first one.
+- Images: `src/content/blog/_images/`, referenced from a post as `@blog-images/<file>` (an alias in `tsconfig.json`; quote it in frontmatter) so `astro:assets` optimises them. Don't use `/src/...` paths: Astro leaves those unprocessed in the body. The cover also becomes the post's share image. A post without one gets a cover of the site's shapes, generated from its slug at build time (`PostCover.astro`).
+- `draft: true` posts appear only in `npm run dev`. A language's post list and feed are built only once it has a published post, and the header's Blog link and the home page's "From the blog" section appear with the first one. Blog pages show an EN/БГ switch in the header once both languages have posts.
 - CMS: `/admin/` on the live site, `/admin/index.html` with `npm run dev`. Sign-in uses a GitHub personal access token (no OAuth app is set up). `publish_mode: editorial_workflow`: each post is a pull request to `master` until it is published. To update Sveltia, bump the version in both `public/admin/index.html` and the schema URL at the top of `config.yml`.
+- Tags work as categories. Each tag has a slug (`tagSlug()`), and with `tagPages` in `src/blog.ts` set to `true`, every tag gets a post list at `/blog/tags/<slug>/` (or `/bg/blog/tags/<slug>/`), the tags become links, and the index shows a tag filter row. It is off until there are enough posts. Reuse existing tags rather than near-duplicates.
+- The design reference is direction B (Workbench) of the redesign artifact; the blog pages follow its blog index and post layouts.
 - The Gatsby-era blog work is kept on branch `Feature/Blog-wip` for reference.
 
 ## Conventions

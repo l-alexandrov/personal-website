@@ -6,15 +6,17 @@ import Analytics from "../components/Analytics.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import Seo, { type SeoProps } from "../components/Seo.astro";
+import type { LanguageLink } from "../blog";
 import Sprite from "../components/Sprite.astro";
 import ThemeScript from "../components/ThemeScript.astro";
 import "../styles/tokens.css";
 import "../styles/global.css";
 
 // Title, description, language, share image and translations; see Seo.astro.
-type Props = SeoProps;
+// `languages` fills the header's language switch on blog pages.
+type Props = SeoProps & { languages?: LanguageLink[] };
 
-const { lang = "en" } = Astro.props;
+const { lang = "en", languages = [], ...seo } = Astro.props;
 ---
 
 <!doctype html>
@@ -23,7 +25,7 @@ const { lang = "en" } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
-    <Seo {...Astro.props} />
+    <Seo lang={lang} {...seo} />
     <ThemeScript />
     <!-- No preloads: text paints at once in the metric-matched fallback, then swaps. -->
     <Font cssVariable="--font-geologica" />
@@ -40,7 +42,7 @@ const { lang = "en" } = Astro.props;
   <body>
     <Sprite />
     <a class="skip" href="#content">Skip to content</a>
-    <Header />
+    <Header lang={lang} languages={languages} />
     <main id="content" tabindex="-1">
       <slot />
     </main>

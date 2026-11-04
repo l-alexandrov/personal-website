@@ -10,7 +10,7 @@ Ask only for what is missing:
 - **Topic / outline / notes.** If the user only wants a stub, write the frontmatter and a TODO body, and set `draft: true`.
 - **Language:** `en` (default) or `bg`.
 - **Cover image:** optional. An existing file in `src/content/blog/_images/`, or none. Never hotlink.
-- **Tags:** 3–6. Propose them yourself if none are given.
+- **Tags:** 3–6. Propose them yourself if none are given. Tags double as categories, so reuse the tags existing posts in that language already use (check `src/content/blog/<lang>/`) instead of inventing near-duplicates.
 
 ## 2. Check the schema
 Read the `blog` collection in `src/content.config.ts` first. It is the source of truth; if it has changed since this skill was written, follow the file. The current fields are:

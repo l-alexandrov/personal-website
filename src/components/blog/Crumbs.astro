@@ -1,0 +1,57 @@
+---
+// Breadcrumb trail. The last item is the current page and has no link.
+interface Props {
+  items: { label: string; href?: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <ol>
+    {
+      items.map(({ label, href }) => (
+        <li>{href ? <a href={href}>{label}</a> : <span aria-current="page">{label}</span>}</li>
+      ))
+    }
+  </ol>
+</nav>
+
+<style>
+  ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  li {
+    min-width: 0;
+  }
+
+  /* A long post title shortens to fit the line instead of wrapping under the trail. */
+  li:last-child {
+    flex: 1 1 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  li + li::before {
+    content: "/";
+    margin-right: 6px;
+    color: var(--s-dim);
+  }
+
+  a {
+    color: var(--muted);
+  }
+
+  a:hover {
+    color: var(--heading);
+  }
+</style>

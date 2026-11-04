@@ -2,16 +2,23 @@
 // One post, at /blog/<slug>/ or /bg/blog/<slug>/, with links to its translations.
 import { render } from "astro:content";
 import { Image, getImage } from "astro:assets";
+import Crumbs from "../../../components/blog/Crumbs.astro";
+import PostCover from "../../../components/blog/PostCover.astro";
+import Tags from "../../../components/blog/Tags.astro";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import me from "../../../assets/me.jpg";
 import {
   blogPath,
   formatDate,
+  getNeighbours,
   getPosts,
   getTranslations,
+  languageLinks,
   localeParam,
   postLocale,
   postPath,
   postSlug,
+  readingTime,
   ui,
   type Post,
 } from "../../../blog";
@@ -29,11 +36,17 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, description, date, updated, image, imageAlt = "", tags } = post.data;
+const { title, description, date, updated, image, imageAlt = "", tags, draft } = post.data;
 const locale = postLocale(post);
 const t = ui[locale];
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 const translations = await getTranslations(post);
+const languages = await languageLinks(locale, postPath(post), translations);
+const { older, newer } = await getNeighbours(post);
+const next = older ?? newer;
+// The table of contents lists the h2s, and only when there are at least two.
+const toc = headings.filter((heading) => heading.depth === 2);
+const hasToc = toc.length >= 2;
 const url = new URL(postPath(post), Astro.site).href;
 
 // The cover doubles as the share image, as a JPEG at most 1200px wide.
@@ -70,193 +83,276 @@ const json = JSON.stringify(schema).replace(/</g, "\\u003c");
   image={shareImage}
   article={{ published: date, modified: updated, tags }}
   alternates={translations.map((translation) => ({ lang: postLocale(translation), href: postPath(translation) }))}
+  languages={languages}
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={json} />
     <link rel="alternate" type="application/rss+xml" title={`${t.blog} | ${t.rss}`} href={`${blogPath(locale)}rss.xml`} />
   </Fragment>
 
-  <article class="wrap post">
-    <header class="stack head">
-      <a class="back" href={blogPath(locale)}>← {t.allPosts}</a>
+  <article class:list={["wrap", "post", { "has-toc": hasToc }]}>
+    <header class="head">
+      <Crumbs items={[{ label: t.home, href: "/" }, { label: t.blog, href: blogPath(locale) }, { label: title }]} />
+      <h1>{title}</h1>
+      <p class="lede">{description}</p>
       <p class="meta">
         <time datetime={date.toISOString()}>{formatDate(date, locale)}</time>
+        <span>{t.minRead(readingTime(post))}</span>
         {
           updated && (
             <span>
-              · {t.updated} <time datetime={updated.toISOString()}>{formatDate(updated, locale)}</time>
+              {t.updated} <time datetime={updated.toISOString()}>{formatDate(updated, locale)}</time>
             </span>
           )
         }
+        {draft && <span class="draft">Draft</span>}
+        {
+          translations.map((translation) => (
+            <a href={postPath(translation)} hreflang={postLocale(translation)} lang={postLocale(translation)}>
+              {ui[postLocale(translation)].readIn}
+            </a>
+          ))
+        }
       </p>
-      <h1>{title}</h1>
-      <p class="lede">{description}</p>
-      {
-        translations.length > 0 && (
-          <ul class="translations">
-            {translations.map((translation) => (
-              <li>
-                <a href={postPath(translation)} hreflang={postLocale(translation)} lang={postLocale(translation)}>
-                  {ui[postLocale(translation)].readIn}
-                </a>
-              </li>
-            ))}
-          </ul>
-        )
-      }
     </header>
 
-    {
-      image && (
-        <Image
-          class="cover"
-          src={image}
-          alt={imageAlt}
-          widths={[480, 720, 960, 1440].filter((width) => width <= image.width)}
-          sizes="(min-width: 800px) 760px, calc(100vw - 32px)"
-          loading="eager"
-          fetchpriority="high"
-        />
-      )
-    }
+    <PostCover class="post-cover" slug={postSlug(post)} image={image} alt={imageAlt} sizes="(min-width: 1280px) 1200px, calc(100vw - 32px)" eager />
 
-    <div class="prose">
-      <Content />
+    <div class="layout">
+      {
+        hasToc && (
+          <nav class="toc" aria-labelledby="toc-title">
+            <p id="toc-title">{t.onThisPage}</p>
+            <ol>
+              {toc.map((heading) => (
+                <li>
+                  <a href={`#${heading.slug}`}>{heading.text}</a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )
+      }
+      <div class="prose">
+        <Content />
+      </div>
     </div>
 
-    {
-      tags.length > 0 && (
-        <footer class="tags">
-          <h2 class="sr-only">{t.tags}</h2>
-          <ul>
-            {tags.map((tag) => (
-              <li>{tag}</li>
-            ))}
-          </ul>
-        </footer>
-      )
-    }
+    <footer class="foot">
+      <Tags tags={tags} locale={locale} />
+      <div class="author">
+        <Image src={me} alt="" width={64} height={64} densities={[1, 2]} />
+        <div>
+          <p class="name">{site.name}</p>
+          <p>{t.author}</p>
+        </div>
+      </div>
+      <nav class="post-nav" aria-label={t.morePosts}>
+        <a href={blogPath(locale)}>← {t.allPosts}</a>
+        {next && <a href={postPath(next)}>{next.data.title} →</a>}
+      </nav>
+    </footer>
   </article>
 </BaseLayout>
 
 <style>
   .post {
-    --measure: 760px;
     display: flex;
     flex-direction: column;
-    gap: 32px;
-    padding-block: clamp(40px, 7vw, 80px);
-  }
-
-  .post > * {
-    width: 100%;
-    max-width: var(--measure);
-    margin-inline: auto;
+    padding-bottom: clamp(48px, 7vw, 88px);
   }
 
   .head {
-    --gap: 12px;
-  }
-
-  .back {
-    align-self: flex-start;
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
-    text-decoration: none;
-  }
-
-  .meta {
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 46rem;
+    padding-block: clamp(32px, 6vw, 72px) 32px;
   }
 
   h1 {
-    font-size: clamp(2rem, 4.5vw, 3rem);
+    font-size: clamp(2.1rem, 5vw, 3.5rem);
     font-weight: 800;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.03em;
   }
 
   .lede {
-    font-size: clamp(1.0625rem, 1.6vw, 1.1875rem);
+    max-width: 44ch;
+    font-size: clamp(1.125rem, 1.8vw, 1.375rem);
     color: var(--muted);
   }
 
-  .translations {
+  .meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 20px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
-  }
-
-  .cover {
-    height: auto;
-    border-radius: var(--radius);
-    border: 1px solid var(--line);
-  }
-
-  .tags ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    list-style: none;
-    margin: 0;
-    padding: 20px 0 0;
-    border-top: 1px solid var(--line);
-  }
-
-  .tags li {
-    padding: 4px 10px;
-    border-radius: var(--radius-sm);
-    background: var(--surface-2);
+    align-items: center;
+    gap: 4px 10px;
     font-family: var(--font-mono);
     font-size: 0.8125rem;
     color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .draft {
+    padding: 2px 8px;
+    border-radius: var(--radius-btn);
+    background: var(--surface-2);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .post-cover {
+    margin-bottom: clamp(32px, 5vw, 56px);
+    border-radius: var(--radius);
+    --ratio: 3 / 1;
+  }
+
+  .layout {
+    display: grid;
+    gap: 40px;
+  }
+
+  .toc {
+    display: none;
+  }
+
+  .foot {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    max-width: 68ch;
+    margin-top: 56px;
+    padding-top: 48px;
+    border-top: 1px solid var(--line);
+  }
+
+  .author {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .author img {
+    flex: none;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .author .name {
+    color: var(--heading);
+    font-weight: 700;
+  }
+
+  .author p:not(.name) {
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+
+  .post-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  /* Wide screens: a sticky table of contents to the left of the text. */
+  @media (min-width: 1000px) {
+    .has-toc .layout {
+      grid-template-columns: 200px minmax(0, 1fr);
+      gap: 56px;
+    }
+
+    .toc {
+      display: block;
+      position: sticky;
+      top: 24px;
+      align-self: start;
+      font-size: 0.875rem;
+    }
+
+    .has-toc .foot {
+      margin-left: 256px;
+    }
+  }
+
+  .toc p {
+    margin-bottom: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  .toc ol {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: 1px solid var(--line);
+  }
+
+  .toc a {
+    display: block;
+    margin-left: -1px;
+    padding: 6px 12px;
+    border-left: 2px solid transparent;
+    color: var(--fg);
+    text-decoration: none;
+  }
+
+  .toc a:hover {
+    border-left-color: var(--primary);
+    color: var(--heading);
   }
 
   /* Markdown body. The elements come from <Content />, so they need :global(). */
   .prose {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15em;
+    min-width: 0;
+    max-width: 68ch;
     font-size: 1.0625rem;
     line-height: 1.75;
   }
 
-  .prose > :global(* + *) {
-    margin-top: 1.25em;
-  }
-
   .prose :global(h2) {
-    margin-top: 2em;
-    font-size: clamp(1.375rem, 2.4vw, 1.75rem);
+    margin-top: 1.2em;
+    font-size: 1.6rem;
     font-weight: 700;
     letter-spacing: -0.02em;
+    scroll-margin-top: 24px;
   }
 
   .prose :global(h3) {
-    margin-top: 1.75em;
+    margin-top: 1em;
     font-size: 1.25rem;
     font-weight: 600;
-  }
-
-  .prose :global(:is(h2, h3) + *) {
-    margin-top: 0.75em;
+    scroll-margin-top: 24px;
   }
 
   .prose :global(:is(ul, ol)) {
-    padding-left: 1.4em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+    padding-left: 1.3em;
   }
 
-  .prose :global(li + li) {
-    margin-top: 0.4em;
+  .prose :global(li::marker) {
+    color: var(--primary);
   }
 
   .prose :global(blockquote) {
-    padding-left: 1em;
-    border-left: 3px solid var(--primary);
-    color: var(--muted);
+    padding: 0.2em 0 0.2em 1.1em;
+    border-left: 4px solid var(--primary);
+    color: var(--heading);
+    font-size: 1.3rem;
+    font-weight: 500;
   }
 
   .prose :global(img) {
@@ -265,6 +361,7 @@ const json = JSON.stringify(schema).replace(/</g, "\\u003c");
   }
 
   .prose :global(hr) {
+    width: 100%;
     border: 0;
     border-top: 1px solid var(--line);
   }
@@ -274,7 +371,7 @@ const json = JSON.stringify(schema).replace(/</g, "\\u003c");
     border-radius: 4px;
     background: var(--surface-2);
     font-family: var(--font-mono);
-    font-size: 0.875em;
+    font-size: 0.88em;
     overflow-wrap: anywhere;
   }
 

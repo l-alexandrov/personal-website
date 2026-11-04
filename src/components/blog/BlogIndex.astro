@@ -1,0 +1,136 @@
+---
+// The body of a post list page: the blog index (/blog/, /bg/blog/) and, with tag pages on,
+// each tag's page (/blog/tags/<slug>/).
+import { blogPath, getTags, tagPages, tagPath, ui, type Locale, type Post } from "../../blog";
+import Crumbs from "./Crumbs.astro";
+import PostList from "./PostList.astro";
+
+interface Props {
+  locale: Locale;
+  posts: Post[];
+  // Other languages that have posts, for the link under the heading.
+  others: Locale[];
+  // Set on a tag's page.
+  tag?: string;
+}
+
+const { locale, posts, others, tag } = Astro.props;
+const t = ui[locale];
+const tags = tagPages ? await getTags(locale) : [];
+const crumbs = tag
+  ? [{ label: t.home, href: "/" }, { label: t.blog, href: blogPath(locale) }, { label: tag }]
+  : [{ label: t.home, href: "/" }, { label: t.blog }];
+---
+
+<header class="page-head">
+  <div class="wrap stack">
+    <Crumbs items={crumbs} />
+    <h1>{tag ? `${t.taggedWith} “${tag}”` : t.blog}</h1>
+    {!tag && <p class="lede">{t.description}</p>}
+    <p class="note">
+      {t.postCount(posts.length)}
+      {
+        others.map((other) => (
+          <>
+            {" · "}
+            <a href={blogPath(other)} hreflang={other} lang={other}>
+              {ui[other].postsIn}
+            </a>
+          </>
+        ))
+      }
+      {" · "}
+      <a href={`${blogPath(locale)}rss.xml`}>{t.rss}</a>
+    </p>
+    {
+      tags.length > 0 && (
+        <nav aria-label={t.tags}>
+          <ul class="filters">
+            <li>
+              <a href={blogPath(locale)} aria-current={tag ? undefined : "page"}>
+                {t.allPosts}
+              </a>
+            </li>
+            {tags.map((item) => (
+              <li>
+                <a href={tagPath(locale, item.name)} aria-current={tag === item.name ? "page" : undefined}>
+                  {item.name} <span class="count">{item.posts.length}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+  </div>
+</header>
+
+<div class="wrap list">
+  <PostList posts={posts} lead={!tag} />
+</div>
+
+<style>
+  .page-head {
+    padding-block: clamp(40px, 7vw, 88px) clamp(24px, 4vw, 48px);
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 6vw, 4.25rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
+
+  .lede {
+    max-width: 36ch;
+    font-size: clamp(1.125rem, 1.8vw, 1.375rem);
+    color: var(--fg);
+  }
+
+  .note {
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .filters a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-btn);
+    color: var(--fg);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    text-decoration: none;
+  }
+
+  .filters a:hover {
+    border-color: var(--primary);
+    color: var(--heading);
+  }
+
+  .filters a[aria-current] {
+    background: var(--surface-2);
+    color: var(--heading);
+  }
+
+  .count {
+    color: var(--muted);
+  }
+
+  .list {
+    padding-block: 32px clamp(48px, 7vw, 88px);
+  }
+</style>

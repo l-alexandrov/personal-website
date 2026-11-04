@@ -1,6 +1,14 @@
 ---
-import { blogPath, locales, localesWithPosts } from "../blog";
+import { blogPath, locales, localesWithPosts, ui, type LanguageLink, type Locale } from "../blog";
 import ThemeToggle from "./ThemeToggle.astro";
+
+interface Props {
+  lang: Locale;
+  // This page in each language; the switch shows only on blog pages that have them.
+  languages: LanguageLink[];
+}
+
+const { lang, languages } = Astro.props;
 
 // The blog link appears once there is a published post, and opens the English list if it exists.
 const [blogLocale] = await localesWithPosts();
@@ -8,8 +16,8 @@ const blogHref = blogLocale && blogPath(blogLocale);
 const nav = [
   { label: "Projects", href: "/#projects" },
   { label: "About", href: "/#about" },
-  { label: "Contact", href: "/#contact" },
   ...(blogHref ? [{ label: "Blog", href: blogHref }] : []),
+  { label: "Contact", href: "/#contact" },
 ];
 
 // "page" on a link's own URL; "true" for the blog link on any blog page, in any language.
@@ -34,6 +42,23 @@ const ariaCurrent = (href: string) => (href === current ? "page" : href === blog
       </ul>
     </nav>
     <div class="tools">
+      {
+        languages.length > 0 && (
+          <nav class="lang-switch" aria-label="Language">
+            {languages.map((link) => (
+              <a
+                href={link.href}
+                hreflang={link.lang}
+                lang={link.lang}
+                aria-label={ui[link.lang].languageName}
+                aria-current={link.lang === lang ? "true" : undefined}
+              >
+                {ui[link.lang].short}
+              </a>
+            ))}
+          </nav>
+        )
+      }
       <ThemeToggle />
     </div>
   </div>
@@ -57,6 +82,24 @@ const ariaCurrent = (href: string) => (href === current ? "page" : href === blog
 
   .site-nav {
     min-width: 0;
+  }
+
+  /* With the language switch, narrow screens put the links on a row of their own, under the switches. */
+  @media (max-width: 859px) {
+    .wrap:has(.lang-switch) {
+      flex-wrap: wrap;
+      row-gap: 8px;
+      padding-top: 12px;
+    }
+
+    .wrap:has(.lang-switch) .site-nav {
+      order: 1;
+      width: 100%;
+    }
+
+    .wrap:has(.lang-switch) .tools {
+      margin-left: auto;
+    }
   }
 
   /* The links scroll sideways if they ever outgrow a narrow screen. The negative margin
@@ -87,6 +130,35 @@ const ariaCurrent = (href: string) => (href === current ? "page" : href === blog
   .site-nav a[aria-current] {
     color: var(--heading);
     background: var(--surface-2);
+  }
+
+  .lang-switch {
+    display: flex;
+    padding: 3px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-btn);
+  }
+
+  .lang-switch a {
+    display: grid;
+    place-items: center;
+    min-width: 44px;
+    min-height: 36px;
+    padding: 0 10px;
+    border-radius: calc(var(--radius-btn) - 3px);
+    color: var(--muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .lang-switch a:hover {
+    color: var(--heading);
+  }
+
+  .lang-switch a[aria-current] {
+    background: var(--surface-2);
+    color: var(--heading);
   }
 
   .tools {

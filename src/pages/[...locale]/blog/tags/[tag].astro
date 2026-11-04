@@ -1,0 +1,49 @@
+---
+// One tag's posts, at /blog/tags/<slug>/ or /bg/blog/tags/<slug>/. Built only when `tagPages`
+// in src/blog.ts is on; until then this route produces no pages.
+import BlogIndex from "../../../../components/blog/BlogIndex.astro";
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import {
+  blogPath,
+  getTags,
+  languageLinks,
+  localeParam,
+  localesWithPosts,
+  tagPages,
+  tagPath,
+  ui,
+  type Locale,
+  type Post,
+} from "../../../../blog";
+
+export async function getStaticPaths() {
+  if (!tagPages) return [];
+  const locales = await localesWithPosts();
+  const paths = await Promise.all(
+    locales.map(async (locale) =>
+      (await getTags(locale)).map((tag) => ({
+        params: { locale: localeParam(locale), tag: tag.slug },
+        props: { locale, locales, name: tag.name, posts: tag.posts },
+      })),
+    ),
+  );
+  return paths.flat();
+}
+
+interface Props {
+  locale: Locale;
+  locales: Locale[];
+  name: string;
+  posts: Post[];
+}
+
+const { locale, locales, name, posts } = Astro.props;
+const t = ui[locale];
+const others = locales.filter((other) => other !== locale);
+const languages = await languageLinks(locale, tagPath(locale, name));
+---
+
+<BaseLayout title={`${t.taggedWith} “${name}”`} description={t.description} lang={locale} languages={languages}>
+  <link slot="head" rel="alternate" type="application/rss+xml" title={`${t.blog} | ${t.rss}`} href={`${blogPath(locale)}rss.xml`} />
+  <BlogIndex locale={locale} posts={posts} others={others} tag={name} />
+</BaseLayout>
